@@ -2,60 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* The Atmosphere */
+        /* The Environment: Absolute Isolation */
         body, html {
-            margin: 0; padding: 0; height: 100%;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #f0f4f9; /* The exact Google canvas grey-white */
             font-family: 'Roboto', arial, sans-serif;
-            background-color: #f0f4f9; /* The exact shade of Google's 'clean' canvas */
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; /* No scrolling allowed in a vacuum */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Total lockdown. No scrolling, no bars. */
         }
 
-        /* The Card: No more Chromebook clutter */
+        /* The Card: Floating in the center */
         .login-card {
-            background-color: #ffffff;
-            width: 740px; 
+            background: #ffffff;
+            width: 740px;
             min-height: 440px;
             padding: 48px;
             border-radius: 28px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             box-sizing: border-box;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            /* Subtle shadow to separate from the background without being 'loud' */
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
         }
 
-        .left-side { padding-right: 24px; }
-        
-        .logo { width: 48px; margin-bottom: 16px; }
-        
-        h1 { 
-            font-family: 'Google Sans', sans-serif; 
-            font-size: 36px; 
-            font-weight: 400; 
-            color: #1f1f1f; 
-            margin: 0; 
-            letter-spacing: -0.5px;
+        .left-side {
+            padding-right: 24px;
         }
 
-        .subtitle { 
-            font-size: 16px; 
-            color: #1f1f1f; 
+        .logo {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 36px;
+            font-weight: 400;
+            color: #1f1f1f;
+            margin: 0;
+            line-height: 1.25;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #1f1f1f;
             margin-top: 12px;
             line-height: 1.5;
         }
 
-        .right-side { 
-            display: flex; 
-            flex-direction: column; 
-            padding-top: 48px; 
+        .right-side {
+            display: flex;
+            flex-direction: column;
+            padding-top: 48px;
         }
 
-        .field-container {
+        /* The Input: Pixel-perfect focus */
+        .input-group {
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         input[type="text"] {
@@ -65,64 +79,63 @@
             border-radius: 4px;
             font-size: 16px;
             box-sizing: border-box;
-            color: #1f1f1f;
-            transition: border 0.2s;
+            transition: border 0.1s ease-in-out;
         }
 
         input[type="text"]:focus {
             outline: none;
             border: 2px solid #0b57d0;
-            padding: 12px 14px; /* Adjust for border thickness */
+            padding: 12px 14px; /* Adjust for border width change */
         }
 
-        .text-link { 
-            color: #0b57d0; 
-            text-decoration: none; 
-            font-size: 14px; 
-            font-weight: 500; 
+        .link-btn {
             background: none;
             border: none;
-            padding: 0;
+            color: #0b57d0;
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
             cursor: pointer;
+            padding: 0;
             text-align: left;
             margin-bottom: 40px;
         }
 
-        .privacy-prompt { 
-            font-size: 14px; 
-            color: #444746; 
-            line-height: 1.4; 
+        .privacy-notice {
+            font-size: 14px;
+            color: #444746;
+            line-height: 1.4;
             margin-bottom: 40px;
         }
 
-        .action-row { 
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: center; 
-            gap: 24px; 
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 24px;
             margin-top: auto;
         }
 
-        .btn-primary { 
-            background: #0b57d0; 
-            color: white; 
-            padding: 10px 24px; 
-            border-radius: 20px; 
-            border: none; 
-            font-family: 'Google Sans', sans-serif;
-            font-weight: 500; 
-            cursor: pointer; 
-            font-size: 14px;
-        }
-        
-        .btn-secondary {
-            color: #0b57d0;
-            background: none;
+        .btn-next {
+            background-color: #0b57d0;
+            color: white;
             border: none;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-family: 'Google Sans', sans-serif;
             font-weight: 500;
             font-size: 14px;
             cursor: pointer;
+        }
+
+        .btn-create {
+            background: none;
+            border: none;
+            color: #0b57d0;
             font-family: 'Google Sans', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -130,7 +143,7 @@
 
 <div class="login-card">
     <div class="left-side">
-        <!-- SVG Google Logo -->
+        <!-- Exact SVG Path for the Modern Google 'G' -->
         <svg class="logo" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -142,18 +155,18 @@
     </div>
 
     <div class="right-side">
-        <div class="field-container">
-            <input type="text" placeholder="Email or phone" spellcheck="false">
+        <div class="input-group">
+            <input type="text" placeholder="Email or phone" autocomplete="username">
         </div>
-        <button class="text-link">Forgot email?</button>
+        <button class="link-btn">Forgot email?</button>
         
-        <div class="privacy-prompt">
-            Not your computer? Use Guest mode to sign in privately. <a href="#" class="text-link" style="font-weight:400">Learn more</a>
+        <div class="privacy-notice">
+            Not your computer? Use Guest mode to sign in privately. <a href="#" style="color:#0b57d0; text-decoration:none;">Learn more</a>
         </div>
 
         <div class="action-row">
-            <button class="btn-secondary">Create account</button>
-            <button class="btn-primary">Next</button>
+            <button class="btn-create">Create account</button>
+            <button class="btn-next">Next</button>
         </div>
     </div>
 </div>
