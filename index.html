@@ -2,144 +2,155 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --google-blue: #1a73e8;
-            --text-dark: #202124;
-            --border-gray: #dadce0;
+            --bg-gray: #f8f9fa;
         }
 
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: 'Roboto', arial, sans-serif;
-            background-color: #f0f2f5; /* Light gray background like the screenshot */
+            background-color: #e9eef6; /* Exact shade from Screenshot 2026-05-13 10.10.13 AM.png */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* The Centered Google Login Card */
+        .viewport {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
         }
 
-        /* The Main Container from Screenshot 2026-05-13 10.10.13 AM.png */
         .auth-card {
             background: white;
-            width: 740px; /* Wider desktop footprint */
+            width: 748px;
             min-height: 400px;
-            border-radius: 28px; /* Softer, modern corners */
+            border-radius: 28px;
             display: flex;
-            padding: 36px;
-            box-shadow: none;
+            padding: 40px;
             box-sizing: border-box;
         }
 
-        /* Left Column: Branding */
-        .brand-section {
-            flex: 1;
-            padding-right: 20px;
-        }
+        .left-pane { flex: 1; padding-right: 24px; }
+        .right-pane { flex: 1; display: flex; flex-direction: column; padding-top: 40px; }
 
-        .google-logo { width: 75px; margin-bottom: 12px; }
-        h1 { font-size: 36px; font-weight: 400; color: var(--text-dark); margin: 10px 0; }
-        .sub-text { font-size: 16px; color: var(--text-dark); margin-bottom: 24px; }
-
-        /* Right Column: Interaction */
-        .form-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .input-group { position: relative; margin-bottom: 20px; }
+        .logo { width: 48px; margin-bottom: 16px; }
+        h1 { font-family: 'Google Sans', sans-serif; font-size: 36px; font-weight: 400; color: #1f1f1f; margin: 0; }
+        .sub { font-size: 16px; color: #1f1f1f; margin: 12px 0 32px; }
 
         input {
             width: 100%;
             padding: 13px 15px;
-            border: 1px solid var(--border-gray);
+            border: 1px solid #747775;
             border-radius: 4px;
             font-size: 16px;
-            box-sizing: border-box;
-            margin-top: 10px;
+            margin-bottom: 8px;
         }
 
-        .forgot-link {
+        .blue-link {
             color: var(--google-blue);
+            text-decoration: none;
             font-weight: 500;
             font-size: 14px;
-            text-decoration: none;
-            display: block;
-            margin-top: 8px;
         }
 
-        .helper-text {
-            font-size: 14px;
-            color: #5f6368;
-            margin: 32px 0;
-            line-height: 1.4;
-        }
+        .guest-text { font-size: 14px; color: #444746; margin: 40px 0; line-height: 1.5; }
 
-        .actions {
+        .action-row {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
             margin-top: auto;
         }
 
-        .create-link {
-            color: var(--google-blue);
-            font-weight: 500;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
         .btn-next {
-            background-color: var(--google-blue);
+            background-color: #0b57d0;
             color: white;
             padding: 10px 24px;
             border: none;
-            border-radius: 20px; /* Pill shape from the screenshot */
-            font-size: 14px;
+            border-radius: 100px; /* Precise pill from Screenshot 2026-05-13 10.10.13 AM.png */
             font-weight: 500;
             cursor: pointer;
+        }
+
+        /* THE OS SHELF (Chromebook Simulation) */
+        .os-shelf {
+            height: 48px;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .app-icons { display: flex; gap: 12px; }
+        .icon { width: 32px; height: 32px; border-radius: 50%; background: #444; }
+        
+        .status-tray {
+            position: absolute;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            color: white;
+            font-size: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="auth-card">
-    <div class="brand-section">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="google-logo">
-        <h1>Sign in</h1>
-        <p class="sub-text">Use your Google Account</p>
-    </div>
+<div class="viewport">
+    <div class="auth-card">
+        <div class="left-pane">
+            <svg class="logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            <h1>Sign in</h1>
+            <p class="sub">Use your Google Account</p>
+        </div>
 
-    <div class="form-section">
-        <div id="step-container">
-            <input type="email" id="user-input" placeholder="Email or phone">
-            <a href="#" class="forgot-link">Forgot email?</a>
+        <div class="right-pane">
+            <input type="email" placeholder="Email or phone" id="u">
+            <a href="#" class="blue-link">Forgot email?</a>
             
-            <p class="helper-text">
-                Not your computer? Use Guest mode to sign in privately. 
-                <a href="#" style="color: var(--google-blue); text-decoration: none; font-weight:500;">Learn more</a>
+            <p class="guest-text">
+                Not your computer? Use Guest mode to sign in privately. <a href="#" class="blue-link">Learn more</a>
             </p>
 
-            <div class="actions">
-                <a href="#" class="create-link">Create account</a>
-                <button class="btn-next" onclick="capture()">Next</button>
+            <div class="action-row">
+                <a href="#" class="blue-link">Create account</a>
+                <button class="btn-next" onclick="next()">Next</button>
             </div>
         </div>
     </div>
 </div>
 
+<div class="os-shelf">
+    <div class="app-icons">
+        <div class="icon" style="background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg') center/cover;"></div>
+        <div class="icon" style="background: white;"></div> <!-- Mock Gemini Icon -->
+        <div class="icon" style="background: #00A2FF;"></div> <!-- Mock App Icon -->
+    </div>
+    <div class="status-tray">
+        <span>May 13</span>
+        <span>10:10</span>
+    </div>
+</div>
+
 <script>
-    function capture() {
-        const val = document.getElementById('user-input').value;
-        // As per LAB_EXERCISES_81.txt: Capture and cycle[cite: 1]
-        console.log("Captured Entry:", val);
-        alert("Educational Simulation: Data logged to console.");
+    function next() {
+        // Lab Exercise 3.1: Multi-turn Capture[cite: 1]
+        console.log("Captured:", document.getElementById('u').value);
+        window.location.reload(); // Simulate next turn
     }
 </script>
 
