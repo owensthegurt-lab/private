@@ -5,23 +5,27 @@
     <title>Sign in - Google Accounts</title>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        /* The Outer Environment: Mimicking the image's background */
         body, html {
             margin: 0; padding: 0; height: 100%;
             font-family: 'Roboto', arial, sans-serif;
-            background-color: #ffffff; /* Clean white background, no OS elements */
+            background-color: #e9eef6; /* That specific soft blue-grey */
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* The isolated login card - matching the wide 2-column layout in your PNG */
-        .login-container {
+        /* The Card: Exactly like image_2d8b72.png */
+        .login-card {
+            background-color: #ffffff;
             width: 740px; 
+            min-height: 400px;
             padding: 48px;
+            border-radius: 28px; /* High radius for that modern look */
             display: grid;
             grid-template-columns: 1fr 1fr;
-            column-gap: 24px;
+            box-sizing: border-box;
         }
 
-        .brand-section { padding-right: 10px; }
+        .left-panel { padding-right: 20px; }
         
         .google-logo { width: 48px; margin-bottom: 12px; }
         
@@ -31,49 +35,53 @@
             font-weight: 400; 
             color: #1f1f1f; 
             margin: 0; 
-            line-height: 1.2;
         }
 
         .subtext { 
             font-size: 16px; 
             color: #1f1f1f; 
-            margin-top: 10px; 
-            font-weight: 400;
+            margin-top: 12px;
         }
 
-        .input-section { padding-top: 40px; }
+        .right-panel { 
+            display: flex; 
+            flex-direction: column; 
+            padding-top: 45px; 
+        }
 
         input[type="text"] {
             width: 100%;
-            padding: 13px 15px;
+            padding: 14px 16px;
             border: 1px solid #747775;
             border-radius: 4px;
             font-size: 16px;
             box-sizing: border-box;
-            outline-color: #0b57d0;
+            color: #1f1f1f;
         }
 
-        .link-text { 
+        .blue-link { 
             color: #0b57d0; 
             text-decoration: none; 
             font-size: 14px; 
             font-weight: 500; 
+            margin-top: 8px;
             display: inline-block;
-            margin-top: 9px;
         }
 
-        .privacy-notice { 
+        .guest-mode { 
             font-size: 14px; 
             color: #444746; 
-            line-height: 1.5; 
-            margin: 40px 0 50px 0; 
+            line-height: 1.4; 
+            margin-top: 40px;
+            margin-bottom: 60px;
         }
 
-        .button-row { 
+        .footer-buttons { 
             display: flex; 
             justify-content: flex-end; 
             align-items: center; 
             gap: 24px; 
+            margin-top: auto;
         }
 
         .btn-next { 
@@ -84,7 +92,6 @@
             border: none; 
             font-family: 'Google Sans', sans-serif;
             font-weight: 500; 
-            font-size: 14px;
             cursor: pointer; 
         }
         
@@ -100,9 +107,9 @@
 </head>
 <body>
 
-<div class="login-container">
-    <!-- Left Side: Branding -->
-    <div class="brand-section">
+<div class="login-card">
+    <div class="left-panel">
+        <!-- SVG Logo Path remains the most authentic way to render the 'G' -->
         <svg class="google-logo" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -113,17 +120,15 @@
         <div class="subtext">Use your Google Account</div>
     </div>
 
-    <!-- Right Side: Interaction -->
-    <div class="input-section">
+    <div class="right-panel">
         <input type="text" placeholder="Email or phone" spellcheck="false">
-        <br>
-        <a href="#" class="link-text">Forgot email?</a>
+        <a href="#" class="blue-link">Forgot email?</a>
         
-        <div class="privacy-notice">
-            Not your computer? Use Guest mode to sign in privately. <span class="link-text" style="margin:0">Learn more</span>
+        <div class="guest-mode">
+            Not your computer? Use Guest mode to sign in privately. <a href="#" class="blue-link" style="margin:0">Learn more</a>
         </div>
 
-        <div class="button-row">
+        <div class="footer-buttons">
             <button class="btn-create">Create account</button>
             <button class="btn-next">Next</button>
         </div>
