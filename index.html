@@ -4,165 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
-    <!-- Google's Standard Typeface for the Illusion -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --google-blue: #1a73e8;
+            --text-dark: #202124;
+            --border-gray: #dadce0;
+        }
+
         body {
             font-family: 'Roboto', arial, sans-serif;
-            background-color: #ffffff;
+            background-color: #f0f2f5; /* Light gray background like the screenshot */
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
 
-        .login-box {
-            width: 360px;
+        /* The Main Container from Screenshot 2026-05-13 10.10.13 AM.png */
+        .auth-card {
+            background: white;
+            width: 740px; /* Wider desktop footprint */
             min-height: 400px;
-            padding: 48px 40px 36px;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            text-align: center;
+            border-radius: 28px; /* Softer, modern corners */
+            display: flex;
+            padding: 36px;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+
+        /* Left Column: Branding */
+        .brand-section {
+            flex: 1;
+            padding-right: 20px;
         }
 
         .google-logo { width: 75px; margin-bottom: 12px; }
-        h1 { font-size: 24px; font-weight: 400; color: #202124; margin: 0 0 8px; }
-        p { font-size: 16px; color: #202124; margin-bottom: 24px; }
+        h1 { font-size: 36px; font-weight: 400; color: var(--text-dark); margin: 10px 0; }
+        .sub-text { font-size: 16px; color: var(--text-dark); margin-bottom: 24px; }
 
-        /* Identity Pill: Essential for Tier 3 Trust Normalization[cite: 3] */
-        #identity-section {
-            display: none;
-            align-items: center;
+        /* Right Column: Interaction */
+        .form-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            border: 1px solid #dadce0;
-            padding: 3px 10px 3px 5px;
-            border-radius: 16px;
-            margin: 0 auto 24px;
-            width: fit-content;
         }
 
-        #profile-img { width: 20px; height: 20px; border-radius: 50%; margin-right: 8px; }
+        .input-group { position: relative; margin-bottom: 20px; }
 
         input {
             width: 100%;
             padding: 13px 15px;
-            margin: 10px 0;
-            border: 1px solid #dadce0;
+            border: 1px solid var(--border-gray);
             border-radius: 4px;
             font-size: 16px;
             box-sizing: border-box;
+            margin-top: 10px;
         }
 
-        input:focus { outline: none; border: 2px solid #1a73e8; }
-
-        .footer-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        /* Recovery Links: The "Safe Exit" Anchor */
         .forgot-link {
-            color: #1a73e8;
+            color: var(--google-blue);
             font-weight: 500;
             font-size: 14px;
             text-decoration: none;
-            cursor: pointer;
+            display: block;
+            margin-top: 8px;
         }
 
-        .forgot-link:hover { text-decoration: underline; }
+        .helper-text {
+            font-size: 14px;
+            color: #5f6368;
+            margin: 32px 0;
+            line-height: 1.4;
+        }
 
-        button {
-            background-color: #1a73e8;
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 20px;
+            margin-top: auto;
+        }
+
+        .create-link {
+            color: var(--google-blue);
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .btn-next {
+            background-color: var(--google-blue);
             color: white;
             padding: 10px 24px;
             border: none;
-            border-radius: 4px;
+            border-radius: 20px; /* Pill shape from the screenshot */
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
         }
-
-        /* Transitions from INTERVIEW_SCRIPT_81.txt philosophy[cite: 2] */
-        .fade { transition: opacity 0.2s ease, transform 0.2s ease; }
-        .hidden { display: none; opacity: 0; transform: translateX(20px); }
     </style>
 </head>
 <body>
 
-<div class="login-box">
-    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="google-logo">
-    
-    <!-- Turn 1: Email Capture[cite: 1] -->
-    <div id="step-1" class="fade">
+<div class="auth-card">
+    <div class="brand-section">
+        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="google-logo">
         <h1>Sign in</h1>
-        <p>Use your Google Account</p>
-        <input type="email" id="email-input" placeholder="Email or phone" autofocus>
-        <div class="footer-actions">
-            <!-- Forgot Email Thing Added -->
-            <a href="https://accounts.google.com/signin/usernamerecovery" class="forgot-link">Forgot email?</a>
-            <button onclick="toStep2()">Next</button>
-        </div>
+        <p class="sub-text">Use your Google Account</p>
     </div>
 
-    <!-- Turn 2: Password Capture with Reference Anchoring -->
-    <div id="step-2" class="fade hidden">
-        <h1>Welcome</h1>
-        <div id="identity-section">
-            <img id="profile-img" src="https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="">
-            <span id="user-email-display" style="font-size: 14px; color: #3c4043; font-weight: 500;"></span>
-        </div>
-        <input type="password" id="password-input" placeholder="Enter your password">
-        <div class="footer-actions">
-            <!-- Forgot Password Thing Added -->
-            <a href="https://accounts.google.com/signin/recovery" class="forgot-link">Forgot password?</a>
-            <button onclick="finish()">Next</button>
+    <div class="form-section">
+        <div id="step-container">
+            <input type="email" id="user-input" placeholder="Email or phone">
+            <a href="#" class="forgot-link">Forgot email?</a>
+            
+            <p class="helper-text">
+                Not your computer? Use Guest mode to sign in privately. 
+                <a href="#" style="color: var(--google-blue); text-decoration: none; font-weight:500;">Learn more</a>
+            </p>
+
+            <div class="actions">
+                <a href="#" class="create-link">Create account</a>
+                <button class="btn-next" onclick="capture()">Next</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    /**
-     * Logic for the Multi-Turn Escalation[cite: 3]
-     */
-    function toStep2() {
-        const email = document.getElementById('email-input').value;
-        if (!email) return;
-
-        // Push the email into the UI for the "Trust Handshake"[cite: 4]
-        document.getElementById('user-email-display').innerText = email;
-
-        const s1 = document.getElementById('step-1');
-        const s2 = document.getElementById('step-2');
-
-        s1.style.opacity = '0';
-        s1.style.transform = 'translateX(-20px)';
-
-        setTimeout(() => {
-            s1.classList.add('hidden');
-            s2.classList.remove('hidden');
-            document.getElementById('identity-section').style.display = 'flex';
-            
-            setTimeout(() => {
-                s2.style.opacity = '1';
-                s2.style.transform = 'translateX(0)';
-                document.getElementById('password-input').focus();
-            }, 50);
-        }, 200);
-    }
-
-    function finish() {
-        const email = document.getElementById('email-input').value;
-        const pass = document.getElementById('password-input').value;
-
-        // Systematic documentation for our Tier 3 lab report[cite: 1]
-        console.log("Attack Success Data:", { email, pass });
-
-        // Clean exit: Redirect to the actual service[cite: 3]
-        window.location.href = "https://accounts.google.com";
+    function capture() {
+        const val = document.getElementById('user-input').value;
+        // As per LAB_EXERCISES_81.txt: Capture and cycle[cite: 1]
+        console.log("Captured Entry:", val);
+        alert("Educational Simulation: Data logged to console.");
     }
 </script>
 
